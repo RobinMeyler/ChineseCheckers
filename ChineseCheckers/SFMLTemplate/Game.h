@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "NPC.h"
 #include "HexGrid.h"
+#include "MyVector3.h"
 
 enum class Players {
 	PlayerOne,
@@ -12,8 +13,9 @@ enum class Players {
 };
 
 enum class Phase {
+	SelectingMarble,
 	Evaluating,
-	Selecting,
+	SelectingMove,
 	Moving
 };
 
@@ -46,6 +48,9 @@ private:
 	sf::Vector2i m_mousePosition;
 	bool m_leftPressed;
 	bool m_rightPressed;
+	HexTile* m_pressedToPlayTile;
+	HexTile* m_pressedToMoveToTile;
+	std::vector<HexTile*>* m_tilesPtr;
 
 	HexGrid m_HexGridCenter;
 	std::vector<HexGrid*> m_HexGridTriangleWedges;

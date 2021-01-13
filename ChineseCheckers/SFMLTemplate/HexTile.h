@@ -13,6 +13,7 @@ public:
 	HexTile(sf::Vector2f t_position, sf::Vector3i t_gridCoordinates3axis, int t_cellSize) { m_position = t_position; m_gridCoordinates3axis = t_gridCoordinates3axis; m_cellSize = t_cellSize; setupCircle(); }
 	HexTile(sf::Vector3i t_gridCoordinates3axis) { m_gridCoordinates3axis = t_gridCoordinates3axis; setupCircle(); } // Overloaded, only grid coords passed, figure out gameworld pos
 	void setupCircle();
+	void setNeighbour(HexTile* t_neighbour);
 	void render(sf::RenderWindow* t_rendWindow);
 
 	sf::Vector2f m_position; // The game world position of the Hex tile 
@@ -33,4 +34,7 @@ public:
 
 	sf::Vector3i hex_direction(int t_direction); //returns the direction in 3 axis hex coordinates (for grid)
 
+	// Robin
+	std::vector<HexTile*> m_neighbours;
+	bool isOccupied;
 };

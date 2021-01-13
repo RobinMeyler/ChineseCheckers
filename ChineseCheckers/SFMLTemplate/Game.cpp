@@ -4,15 +4,11 @@
 Players Game::m_players{ Players::PlayerOne };
 
 Game::Game() :
-	m_window{ sf::VideoMode{ 3840, 2160, 32 }, "Game Screen" },
+	m_window{ sf::VideoMode{ 1420, 1080, 32 }, "Game Screen" },
 	m_exitGame{ false },
-	m_HexGridCenter(20, sf::Vector2f(1000, 1000), GridOrientation::Flat, GridType::Hexagon, 10)
+	m_HexGridCenter(30, sf::Vector2f(710, 540), GridOrientation::Pointy, GridType::Hexagon, 4)
 {
-	for (int i = 0; i < 6; i++)
-	{
-
-		HexGrid* p_HexGrid = new HexGrid(20, sf::Vector2f(1000, 1000), GridOrientation::Flat, GridType::Triangle, 10);
-	}
+	m_tilesPtr = m_HexGridCenter.getGrid();
 }
 
 Game::~Game()
@@ -84,15 +80,54 @@ void Game::update(sf::Time t_deltaTime)
 	if (Game::m_players == Players::PlayerOne)
 	{
 		// Player
+		if (m_gamePhase == Phase::SelectingMarble)
+		{
+			// Takes input
+			if (m_leftPressed == true)
+			{
+				bool found = false;
+				for (HexTile* tile : *m_tilesPtr)
+				{
+					MyVector3 distance = tile->circle.getPosition() - (sf::Vector2f)m_mousePosition;
+					if (distance.length() < tile->circle.getRadius())
+					{
+						// Collision found
+						m_pressedToPlayTile = tile;
+						found = true;
+						break;
+					}
+				}
+
+				if (found == true)
+				{
+					m_gamePhase = Phase::Evaluating;
+				}
+				m_leftPressed = false;
+			}
+		}
 		if (m_gamePhase == Phase::Evaluating)
 		{
-			// Game determines which positons are allowed for the player to move
+			// Game determines which positions are allowed for the player to move
 			// Checks each of the players marbles for each of their adjacent places
 			// If it is empty, highlight it
-			// If it is occupied, check the next slot in that direction, if it is filled end search, if it is not highlight it and then check it's neighbours and repeat
-			// Change the cirlce texture to a different color
+			// If it is occupied, check the next slot in that direction, if it is; filled end search, if it is not; highlight it and then check it's neighbours, then repeat
+			// Change the circle texture to a different color
+
+			for (auto &neighbours : m_pressedToPlayTile->m_neighbours)
+			{
+				if (neighbours->isOccupied == false)
+				{
+					// Highlight, mark
+				}
+				else 
+				{
+					// Recursive checks
+				}
+			}
+			m_gamePhase = Phase::SelectingMove;
+
 		}
-		else if (m_gamePhase == Phase::Selecting)
+		else if (m_gamePhase == Phase::SelectingMove)
 		{
 			// Takes input
 			if (m_leftPressed == true)
@@ -101,6 +136,7 @@ void Game::update(sf::Time t_deltaTime)
 				// determine if the circle is valid
 				// begin moving phase
 				m_gamePhase = Phase::Moving;
+				m_leftPressed = false;
 			}
 		}
 		else if (m_gamePhase == Phase::Moving)
@@ -139,9 +175,11 @@ void Game::render()
 
 
 
-
-
-
+	for (int i = 0; i < 6; i++)
+	{
+		HexGrid* p_HexGrid = new HexGrid(30, sf::Vector2f(600 + i*60, 275), GridOrientation::Pointy, GridType::Triangle, 3);
+		p_HexGrid->render(&m_window);
+	}
 
 
 

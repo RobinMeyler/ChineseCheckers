@@ -27,6 +27,11 @@ HexGrid::HexGrid(int t_hexSize, sf::Vector2f t_originPos, GridOrientation t_grid
 	TileGeneration();
 }
 
+std::vector<HexTile*>* HexGrid::getGrid()
+{
+	return &m_gridHexTiles;
+}
+
 void HexGrid::TileGeneration()
 {
 	switch (m_gridType)
@@ -71,6 +76,23 @@ void HexGrid::TileGeneration()
 	}
 	default:
 		break;
+	}
+
+	// Set neighbours
+	for (HexTile* tile : m_gridHexTiles)
+	{
+		for (sf::Vector3i direction : tile->hex_directions)
+		{
+			sf::Vector3i newCoords = tile->m_gridCoordinates3axis + direction;
+			for (HexTile* hex : m_gridHexTiles)
+			{
+				if (hex->m_gridCoordinates3axis == newCoords)
+				{
+					tile->setNeighbour(hex);
+					break;
+				}
+			}
+		}
 	}
 }
 
