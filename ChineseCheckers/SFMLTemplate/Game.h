@@ -5,6 +5,18 @@
 #include "Player.h"
 #include "NPC.h"
 #include "HexGrid.h"
+
+enum class Players {
+	PlayerOne,
+	PlayerTwo
+};
+
+enum class Phase {
+	Evaluating,
+	Selecting,
+	Moving
+};
+
 class Game
 {
 public:
@@ -14,6 +26,8 @@ public:
 	/// main method for game
 	/// </summary>
 	void run();
+	static Players m_players;
+	Phase m_gamePhase;
 
 private:
 
@@ -29,6 +43,11 @@ private:
 	//NPC m_npc;
 	HexGrid m_HexGrid;
 
+
+	// Robin
+	sf::Vector2i m_mousePosition;
+	bool m_leftPressed;
+	bool m_rightPressed;
 };
 
 #endif // !GAME

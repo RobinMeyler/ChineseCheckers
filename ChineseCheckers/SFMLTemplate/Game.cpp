@@ -1,5 +1,8 @@
 #include "Game.h"
 
+
+Players Game::m_players{ Players::PlayerOne };
+
 Game::Game() :
 	m_window{ sf::VideoMode{ 3840, 2160, 32 }, "Game Screen" },
 	m_exitGame{ false },
@@ -49,7 +52,15 @@ void Game::processEvents()
 		{
 			if (event.mouseButton.button == sf::Mouse::Left)
 			{
-				
+				m_mousePosition = sf::Mouse::getPosition(m_window);
+				if (event.mouseButton.button == sf::Mouse::Left)
+				{
+					m_leftPressed = true;
+				}
+				else if (event.mouseButton.button == sf::Mouse::Right)
+				{
+					m_rightPressed = true;
+				}
 			}
 		}
 		if (event.type == sf::Event::MouseButtonReleased)
@@ -64,6 +75,49 @@ void Game::processEvents()
 
 void Game::update(sf::Time t_deltaTime)
 {
+
+	if (Game::m_players == Players::PlayerOne)
+	{
+		// Player
+		if (m_gamePhase == Phase::Evaluating)
+		{
+			// Game determines which positons are allowed for the player to move
+			// Checks each of the players marbles for each of their adjacent places
+			// If it is empty, highlight it
+			// If it is occupied, check the next slot in that direction, if it is filled end search, if it is not highlight it and then check it's neighbours and repeat
+			// Change the cirlce texture to a different color
+		}
+		else if (m_gamePhase == Phase::Selecting)
+		{
+			// Takes input
+			if (m_leftPressed == true)
+			{
+				// For each Circle do a Circle to point collision check to find which circle is pressed else break
+				// determine if the circle is valid
+				// begin moving phase
+				m_gamePhase = Phase::Moving;
+			}
+		}
+		else if (m_gamePhase == Phase::Moving)
+		{
+			// Move the Player Texture to the new position over a few frames
+		}
+	}
+	else if (Game::m_players == Players::PlayerTwo)
+	{
+		// AI ( For now )
+
+
+
+
+
+
+
+
+
+
+	}
+
 	if (m_exitGame)
 	{
 		m_window.close();		// Exiting the game
@@ -75,6 +129,21 @@ void Game::update(sf::Time t_deltaTime)
 void Game::render()
 {
 	m_window.clear(sf::Color::Black);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	//m_player.render(m_window);
 	//m_npc.render(m_window);
 	m_HexGrid.render(&m_window);
