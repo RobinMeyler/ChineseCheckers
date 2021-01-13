@@ -3,7 +3,7 @@
 void HexTile::setupCircle()
 {
     circle.setPosition(m_position);
-    circle.setRadius(10);
+    circle.setRadius(m_cellSize / 2);
     //circle.setOrigin(circle.getRadius() / 2, circle.getRadius() / 2);
     circle.setFillColor(sf::Color::Red);
 }
@@ -11,7 +11,6 @@ void HexTile::setupCircle()
 void HexTile::render(sf::RenderWindow* t_rendWindow)
 {
     t_rendWindow->draw(circle);
-    std::cout << "ya b";
 }
 
 sf::Vector3i HexTile::hex_add(HexTile t_hexTile)

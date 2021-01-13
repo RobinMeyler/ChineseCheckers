@@ -131,6 +131,7 @@
     <ClCompile Include="HexGrid.cpp" />
     <ClCompile Include="HexTile.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MyVector3.cpp" />
     <ClCompile Include="NPC.cpp" />
     <ClCompile Include="Player.cpp" />
   </ItemGroup>
@@ -139,6 +140,7 @@
     <ClInclude Include="HexGrid.h" />
     <ClInclude Include="HexMapStuff.h" />
     <ClInclude Include="HexTile.h" />
+    <ClInclude Include="MyVector3.h" />
     <ClInclude Include="NPC.h" />
     <ClInclude Include="Player.h" />
   </ItemGroup>

@@ -3,8 +3,13 @@
 Game::Game() :
 	m_window{ sf::VideoMode{ 3840, 2160, 32 }, "Game Screen" },
 	m_exitGame{ false },
-	m_HexGrid(100, sf::Vector2f(1000, 1000), GridOrientation::Flat, GridType::Hexagon, 10)
+	m_HexGridCenter(20, sf::Vector2f(1000, 1000), GridOrientation::Flat, GridType::Hexagon, 10)
 {
+	for (int i = 0; i < 6; i++)
+	{
+
+		HexGrid* p_HexGrid = new HexGrid(20, sf::Vector2f(1000, 1000), GridOrientation::Flat, GridType::Triangle, 10);
+	}
 }
 
 Game::~Game()
@@ -77,7 +82,7 @@ void Game::render()
 	m_window.clear(sf::Color::Black);
 	//m_player.render(m_window);
 	//m_npc.render(m_window);
-	m_HexGrid.render(&m_window);
+	m_HexGridCenter.render(&m_window);
 	m_window.display();
 }
 

@@ -27,8 +27,8 @@ private:
 	
 	//Player m_player;
 	//NPC m_npc;
-	HexGrid m_HexGrid;
-
+	HexGrid m_HexGridCenter;
+	std::vector<HexGrid*> m_HexGridTriangleWedges;
 };
 
 #endif // !GAME

@@ -35,7 +35,7 @@ void HexGrid::TileGeneration()
 	{
 		for (int x = -m_gridSize; x <= m_gridSize; x++)
 		{
-			for (int y = 0; y <= m_gridSize; y++)
+			for (int y = -m_gridSize; y <= m_gridSize; y++)
 			{
 				int z = -x - y;
 
@@ -46,7 +46,7 @@ void HexGrid::TileGeneration()
 					sf::Vector2f positionCoordinates; // position in game world
 					positionCoordinates = hex_to_pixel(m_layout, gridCoordinates3axis);
 
-					HexTile* p_tile = new HexTile(positionCoordinates, gridCoordinates3axis);
+					HexTile* p_tile = new HexTile(positionCoordinates, gridCoordinates3axis, m_hexSize);
 					m_gridHexTiles.push_back(p_tile);
 				}
 			}
@@ -60,9 +60,10 @@ void HexGrid::TileGeneration()
 			for (int y = 0; y <= x; y++)
 			{
 				sf::Vector3i gridCoordinates3axis = { x, -y, y - x };
+				sf::Vector2f positionCoordinates; // position in game world
+				positionCoordinates = hex_to_pixel(m_layout, gridCoordinates3axis);
 
-				HexTile* p_tile = new HexTile(gridCoordinates3axis);
-				p_tile->m_position = hex_to_pixel(m_layout, gridCoordinates3axis);
+				HexTile* p_tile = new HexTile(positionCoordinates, gridCoordinates3axis, m_hexSize);
 				m_gridHexTiles.push_back(p_tile);
 			}
 		}
