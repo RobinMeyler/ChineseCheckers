@@ -41,13 +41,15 @@ private:
 	
 	//Player m_player;
 	//NPC m_npc;
-	HexGrid m_HexGrid;
-
 
 	// Robin
 	sf::Vector2i m_mousePosition;
 	bool m_leftPressed;
 	bool m_rightPressed;
+
+	HexGrid m_HexGridCenter;
+	std::vector<HexGrid*> m_HexGridTriangleWedges;
+
 };
 
 #endif // !GAME

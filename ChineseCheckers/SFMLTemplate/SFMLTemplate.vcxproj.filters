@@ -39,6 +39,9 @@
     <ClCompile Include="HexTile.cpp">
       <Filter>Source Files\HexGridFiles</Filter>
     </ClCompile>
+    <ClCompile Include="MyVector3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -58,6 +61,9 @@
     </ClInclude>
     <ClInclude Include="HexTile.h">
       <Filter>Header Files\HexGridFiles</Filter>
+    </ClInclude>
+    <ClInclude Include="MyVector3.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

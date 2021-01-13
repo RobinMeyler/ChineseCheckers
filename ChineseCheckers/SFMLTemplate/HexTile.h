@@ -10,7 +10,7 @@ class HexTile
 {
 public:
 	// constructor
-	HexTile(sf::Vector2f t_position, sf::Vector3i t_gridCoordinates3axis) { m_position = t_position; m_gridCoordinates3axis = t_gridCoordinates3axis; setupCircle(); }
+	HexTile(sf::Vector2f t_position, sf::Vector3i t_gridCoordinates3axis, int t_cellSize) { m_position = t_position; m_gridCoordinates3axis = t_gridCoordinates3axis; m_cellSize = t_cellSize; setupCircle(); }
 	HexTile(sf::Vector3i t_gridCoordinates3axis) { m_gridCoordinates3axis = t_gridCoordinates3axis; setupCircle(); } // Overloaded, only grid coords passed, figure out gameworld pos
 	void setupCircle();
 	void render(sf::RenderWindow* t_rendWindow);
@@ -18,6 +18,7 @@ public:
 	sf::Vector2f m_position; // The game world position of the Hex tile 
 	sf::Vector3i m_gridCoordinates3axis; // the grid coordinates, (on three axis), hex coordinates
 	sf::CircleShape circle;
+	int m_cellSize;
 	//HexMap* map;
 
 	const std::vector<sf::Vector3i> hex_directions = { sf::Vector3i(1, 0, -1), sf::Vector3i(1, -1, 0), sf::Vector3i(0, -1, 1), sf::Vector3i(-1, 0, 1), sf::Vector3i(-1, 1, 0), sf::Vector3i(0, 1, -1) };
