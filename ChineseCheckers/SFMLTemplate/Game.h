@@ -3,7 +3,7 @@
 
 #include <SFML\Graphics.hpp>
 #include "Player.h"
-#include "NPC.h"
+#include "AI.h"
 #include "HexGrid.h"
 #include "MyVector3.h"
 #include "Enum.h"
@@ -49,14 +49,20 @@ private:
 	sf::Vector2i m_mousePosition;
 	bool m_leftPressed;
 	bool m_rightPressed;
+
 	HexTile* m_pressedToPlayTile;
 	HexTile* m_pressedToMoveToTile;
-	std::vector<HexTile*>* m_tilesPtr;
+	GamePiece* m_pieceInPlay;
+	
 
+
+	std::vector<HexTile*>* m_tilesPtr;
 	HexGrid m_HexGridCenter;
 	std::vector<HexGrid*> m_HexGridTriangleWedges;
-
 	std::vector<HexTile*> m_allTiles;
+
+	Player m_player;
+	AI m_AI;
 };
 
 #endif // !GAME

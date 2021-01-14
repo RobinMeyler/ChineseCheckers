@@ -1,18 +1,22 @@
 #pragma once
 #include <SFML\Graphics.hpp>
-
-class NPC
+#include "HexTile.h"
+class AI
 {
 public:
-	NPC(sf::RenderWindow& t_window);
-	~NPC();
+	AI();
+	~AI();
 	void update(sf::Time t_deltaTime);
 	void render(sf::RenderWindow& t_window);
 
-private:
+
 	sf::Sprite m_sprite;
 	sf::Texture m_texture;
 
 	int screenWidth;
 	int screenHeigth;
+
+
+	std::vector<sf::CircleShape> m_marbles;
+	HexTile* m_tile;
 };

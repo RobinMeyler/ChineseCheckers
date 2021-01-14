@@ -128,21 +128,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="GamePiece.cpp" />
     <ClCompile Include="HexGrid.cpp" />
     <ClCompile Include="HexTile.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyVector3.cpp" />
-    <ClCompile Include="NPC.cpp" />
+    <ClCompile Include="AI.cpp" />
     <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Enum.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GamePiece.h" />
     <ClInclude Include="HexGrid.h" />
     <ClInclude Include="HexMapStuff.h" />
     <ClInclude Include="HexTile.h" />
     <ClInclude Include="MyVector3.h" />
-    <ClInclude Include="NPC.h" />
+    <ClInclude Include="AI.h" />
     <ClInclude Include="Player.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

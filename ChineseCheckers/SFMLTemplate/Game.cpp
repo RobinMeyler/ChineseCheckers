@@ -6,6 +6,7 @@ Players Game::m_players{ Players::PlayerOne };
 Game::Game() :
 	m_window{ sf::VideoMode{ 1420, 1080, 32 }, "Game Screen" },
 	m_exitGame{ false },
+	m_gamePhase{ Phase::SelectingMarble},
 	m_HexGridCenter(30, sf::Vector2f(710, 540), GridOrientation::Pointy, GridType::Hexagon, 4, 0, sf::Vector3i(0,0,0), Config::one)
 {
 	// Have grid
@@ -29,7 +30,7 @@ Game::Game() :
 	
 
 
-
+	sf::Color colours[6] = { sf::Color::Red, sf::Color::Green, sf::Color::Yellow, sf::Color::Blue,  sf::Color::Magenta, sf::Color::Cyan };
 	for (int i = 0; i < 6; i++)
 	{
 		//find correct location to place wedges
@@ -61,6 +62,26 @@ Game::Game() :
 
 		HexGrid* p_HexGrid = new HexGrid(30, startingPos + sf::Vector2f(710, 540), GridOrientation::Pointy, GridType::Triangle, 3, (60 * i) -180, startCoords[i], con);
 		p_HexGrid->correct();
+	
+		if (i == 0)
+		{
+			for (int j = 0; j < p_HexGrid->m_gridHexTiles.size(); j++)
+			{
+				m_player.m_marbles.at(j).m_circle.setPosition(p_HexGrid->m_gridHexTiles.at(j)->m_position);
+				m_player.m_marbles.at(j).tile = p_HexGrid->m_gridHexTiles.at(j);
+				p_HexGrid->m_gridHexTiles.at(j)->isOccupied = true;
+			}
+		}
+
+		if (i == 3)
+		{
+			for (int j = 0; j < p_HexGrid->m_gridHexTiles.size(); j++)
+			{
+				m_AI.m_marbles.at(j).setPosition(p_HexGrid->m_gridHexTiles.at(j)->m_position);
+				m_AI.m_tile = p_HexGrid->m_gridHexTiles.at(j);
+				p_HexGrid->m_gridHexTiles.at(j)->isOccupied = true;
+			}
+		}
 		m_HexGridTriangleWedges.push_back(p_HexGrid);
 	}
 
@@ -93,14 +114,14 @@ Game::Game() :
 	}
 
 
-	for (auto tile : m_allTiles)
-	{
-		std::cout << "New Set Tile: X: " << tile->m_gridCoordinates3axis.x << " Y: " << tile->m_gridCoordinates3axis.y << " Z: " << tile->m_gridCoordinates3axis.z << std::endl;
-		for (HexTile* neigh : tile->m_neighbours)
-		{
-			std::cout << "Neighbour X: " << neigh->m_gridCoordinates3axis.x << " Y: " << neigh->m_gridCoordinates3axis.y << " Z: " << neigh->m_gridCoordinates3axis.z << std::endl;
-		}
-	}
+	//for (auto tile : m_allTiles)
+	//{
+	//	std::cout << "New Set Tile: X: " << tile->m_gridCoordinates3axis.x << " Y: " << tile->m_gridCoordinates3axis.y << " Z: " << tile->m_gridCoordinates3axis.z << std::endl;
+	//	for (HexTile* neigh : tile->m_neighbours)
+	//	{
+	//		std::cout << "Neighbour X: " << neigh->m_gridCoordinates3axis.x << " Y: " << neigh->m_gridCoordinates3axis.y << " Z: " << neigh->m_gridCoordinates3axis.z << std::endl;
+	//	}
+	//}
 }
 
 Game::~Game()
@@ -178,13 +199,14 @@ void Game::update(sf::Time t_deltaTime)
 			if (m_leftPressed == true)
 			{
 				bool found = false;
-				for (HexTile* tile : *m_tilesPtr)
+				for (auto & piece : m_player.m_marbles)
 				{
-					MyVector3 distance = tile->circle.getPosition() - (sf::Vector2f)m_mousePosition;
-					if (distance.length() < tile->circle.getRadius())
+					MyVector3 distance = piece.m_circle.getPosition() - (sf::Vector2f)m_mousePosition;
+					if (distance.length() < 30)
 					{
 						// Collision found
-						m_pressedToPlayTile = tile;
+						m_pressedToPlayTile = piece.tile;
+						m_pieceInPlay = &piece;
 						found = true;
 						break;
 					}
@@ -192,6 +214,7 @@ void Game::update(sf::Time t_deltaTime)
 
 				if (found == true)
 				{
+					//m_pressedToPlayTile->circle.setOutlineColor(sf::Color::Green);
 					m_gamePhase = Phase::Evaluating;
 				}
 				m_leftPressed = false;
@@ -210,6 +233,8 @@ void Game::update(sf::Time t_deltaTime)
 				if (neighbours->isOccupied == false)
 				{
 					// Highlight, mark
+					neighbours->isMarked = true;
+					neighbours->circle.setOutlineColor(sf::Color::Green);
 				}
 				else 
 				{
@@ -227,13 +252,51 @@ void Game::update(sf::Time t_deltaTime)
 				// For each Circle do a Circle to point collision check to find which circle is pressed else break
 				// determine if the circle is valid
 				// begin moving phase
-				m_gamePhase = Phase::Moving;
+
+				bool found = false;
+				for (HexTile* tile : m_allTiles)
+				{
+					MyVector3 distance = tile->circle.getPosition() - (sf::Vector2f)m_mousePosition;
+					if (distance.length() < tile->m_cellSize)
+					{
+						if (tile->isMarked == true)
+						{
+							found = true;
+							m_pressedToMoveToTile = tile;
+							break;
+						}
+					}
+				}
+	
+				if (found == true)
+				{
+					m_gamePhase = Phase::Moving;
+				}
+				else
+				{
+					m_gamePhase = Phase::SelectingMarble;
+				}
+
+				// Reset regardless
+				for (HexTile* tile : m_allTiles)
+				{
+					tile->isMarked = false;
+					tile->circle.setOutlineColor(tile->circle.getFillColor());
+				}
+				
 				m_leftPressed = false;
 			}
 		}
 		else if (m_gamePhase == Phase::Moving)
 		{
 			// Move the Player Texture to the new position over a few frames
+			m_pieceInPlay->tile->isOccupied = false;
+			m_pieceInPlay->tile = m_pressedToMoveToTile;
+			m_pieceInPlay->m_circle.setPosition(m_pressedToMoveToTile->m_position);
+			m_pressedToMoveToTile->isOccupied = true;
+			m_gamePhase = Phase::SelectingMarble;
+			// Swap turn;
+
 		}
 	}
 	else if (Game::m_players == Players::PlayerTwo)
@@ -255,30 +318,21 @@ void Game::update(sf::Time t_deltaTime)
 	{
 		m_window.close();		// Exiting the game
 	}
-	//m_player.update(t_deltaTime);
-	//m_npc.update(t_deltaTime);
 }
 
 void Game::render()
 {
 	m_window.clear(sf::Color::Black);
 
-
-
-
-
-
-
-
-
-
-	//m_player.render(m_window);
-	//m_npc.render(m_window);
 	m_HexGridCenter.render(&m_window);
 	for (int i = 0; i < m_HexGridTriangleWedges.size(); i++)
 	{
 		m_HexGridTriangleWedges.at(i)->render(&m_window);
 	}
+
+	m_AI.render(m_window);
+	m_player.render(m_window);
+
 	m_window.display();
 }
 

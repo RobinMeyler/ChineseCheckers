@@ -1,16 +1,22 @@
 #include "Player.h"
 
 
-Player::Player(sf::RenderWindow& t_window)
+Player::Player()
 {
-	// Load a texture from a file
-	m_texture.loadFromFile("Assets/Textures/rocketPixel.png");
-	m_sprite.setTexture(m_texture);
-	m_sprite.setPosition(0, 0);
 
-	//screen dimensions
-	screenHeigth = t_window.getSize().y;
-	screenWidth = t_window.getSize().x;
+
+	int oop = 60;
+	for (int i = 0; i < 10; i++)
+	{
+		GamePiece marble;
+		marble.m_circle.setFillColor(sf::Color::Blue);
+		marble.m_circle.setRadius(30/1.25f);
+		marble.m_circle.setOrigin(14, 14);
+		marble.m_circle.setPosition(oop, 120);
+		oop += 60;
+		m_marbles.push_back(marble);
+	}
+
 }
 
 Player::~Player()
@@ -20,43 +26,13 @@ Player::~Player()
 
 void Player::update(sf::Time t_deltaTime)
 {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-	{
-		m_sprite.move(0, -5);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-	{
-		m_sprite.move(0, 5);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-	{
-		m_sprite.move(-5, 0);
-	}
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-	{
-		m_sprite.move(5, 0);
-	}
 
-	//wrap around checks
-	if (m_sprite.getPosition().x > screenWidth)
-	{
-		m_sprite.setPosition(0, m_sprite.getPosition().y);
-	}
-	else if (m_sprite.getPosition().x < 0)
-	{
-		m_sprite.setPosition(screenWidth, m_sprite.getPosition().y);
-	}
-	if (m_sprite.getPosition().y > screenHeigth)
-	{
-		m_sprite.setPosition(0, m_sprite.getPosition().y);
-	}
-	else if (m_sprite.getPosition().y < 0)
-	{
-		m_sprite.setPosition(m_sprite.getPosition().x, screenHeigth);
-	}
 }
 
 void Player::render(sf::RenderWindow &t_window)
 {
-	t_window.draw(m_sprite);
+	for (auto& marble : m_marbles)
+	{
+		t_window.draw(marble.m_circle);
+	}
 }

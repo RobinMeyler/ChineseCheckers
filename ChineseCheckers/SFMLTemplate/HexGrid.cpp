@@ -68,7 +68,7 @@ void HexGrid::TileGeneration()
 					positionCoordinates = hex_to_pixel(m_layout, gridCoordinates3axis);
 
 					HexTile* p_tile = new HexTile(positionCoordinates, gridCoordinates3axis, m_hexSize);
-					p_tile->circle.setFillColor(sf::Color::Blue);
+					p_tile->circle.setFillColor(sf::Color::White);
 					p_tile->text_x.setString(std::to_string(p_tile->m_gridCoordinates3axis.x));
 					p_tile->text_y.setString(std::to_string(p_tile->m_gridCoordinates3axis.y));
 					p_tile->text_z.setString(std::to_string(p_tile->m_gridCoordinates3axis.z));
@@ -171,17 +171,15 @@ void HexGrid::TileGeneration()
 					}
 				}
 
-
-			
-			
 				if (m_rotateAngle != 0)
 				{
 					positionCoordinates = rotatePointAboutOrigin(positionCoordinates);
 				}
+
 				HexTile* p_tile = new HexTile(positionCoordinates, gridCoordinates3axis, m_hexSize);
-				p_tile->text_x.setString(std::to_string(p_tile->m_gridCoordinates3axis.x));
-				p_tile->text_y.setString(std::to_string(p_tile->m_gridCoordinates3axis.y));
-				p_tile->text_z.setString(std::to_string(p_tile->m_gridCoordinates3axis.z));
+				//p_tile->text_x.setString(std::to_string(p_tile->m_gridCoordinates3axis.x));
+				//p_tile->text_y.setString(std::to_string(p_tile->m_gridCoordinates3axis.y));
+				//p_tile->text_z.setString(std::to_string(p_tile->m_gridCoordinates3axis.z));
 				m_gridHexTiles.push_back(p_tile);
 			}
 		}
@@ -191,7 +189,7 @@ void HexGrid::TileGeneration()
 		break;
 	}
 
-	m_gridHexTiles.at(0)->circle.setFillColor(sf::Color::Green);
+	//m_gridHexTiles.at(0)->circle.setFillColor(sf::Color::Green);
 }
 
 sf::Vector2f HexGrid::hex_to_pixel(Layout layout, sf::Vector3i t_hexGridCoordinates)

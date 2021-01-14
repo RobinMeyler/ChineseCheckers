@@ -37,7 +37,8 @@ public:
 
 	// Robin
 	std::vector<HexTile*> m_neighbours;
-	bool isOccupied;
+	bool isOccupied{ false };
+	bool isMarked{ false };
 	sf::Text text_x;
 	sf::Text text_y;
 	sf::Text text_z;
