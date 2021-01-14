@@ -6,7 +6,7 @@
 #include "NPC.h"
 #include "HexGrid.h"
 #include "MyVector3.h"
-
+#include "Enum.h"
 
 enum class Players {
 	PlayerOne,
@@ -56,6 +56,7 @@ private:
 	HexGrid m_HexGridCenter;
 	std::vector<HexGrid*> m_HexGridTriangleWedges;
 
+	std::vector<HexTile*> m_allTiles;
 };
 
 #endif // !GAME

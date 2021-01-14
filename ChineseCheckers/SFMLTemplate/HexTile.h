@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <SFML/Graphics.hpp>
+#include "MyVector3.h"
 
 //Class to hold tile data
 class HexTile
@@ -15,8 +16,8 @@ public:
 	void setupCircle();
 	void setNeighbour(HexTile* t_neighbour);
 	void render(sf::RenderWindow* t_rendWindow);
-
-	sf::Vector2f m_position; // The game world position of the Hex tile 
+	void setPosition(MyVector3 t_newPos);
+	MyVector3 m_position; // The game world position of the Hex tile 
 	sf::Vector3i m_gridCoordinates3axis; // the grid coordinates, (on three axis), hex coordinates
 	sf::CircleShape circle;
 	int m_cellSize;
@@ -37,4 +38,8 @@ public:
 	// Robin
 	std::vector<HexTile*> m_neighbours;
 	bool isOccupied;
+	sf::Text text_x;
+	sf::Text text_y;
+	sf::Text text_z;
+	sf::Font m_font;
 };

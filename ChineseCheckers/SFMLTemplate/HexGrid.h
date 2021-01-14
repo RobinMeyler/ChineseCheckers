@@ -5,6 +5,7 @@
 #include "HexTile.h"
 #include <iostream>
 #include <vector>
+#include "Enum.h"
 
 enum GridType { Hexagon, Triangle };
 enum GridOrientation { Flat, Pointy }; // the grid layout orientation (center cell either flat or pointy at top)
@@ -55,13 +56,15 @@ struct Layout
 	Layout(Orientation orientation_, int size_, sf::Vector2f origin_) : orientation(orientation_), size(size_), origin(origin_) {}
 };
 
+
 class HexGrid
 {
 public:
 
 	std::vector<HexTile*>* getGrid();
 
-	HexGrid(int t_hexSize, sf::Vector2f t_originPos, GridOrientation t_gridOrientation, GridType t_gridType, int t_gridSize, int t_rotateAngle);
+	HexGrid(int t_hexSize, sf::Vector2f t_originPos, GridOrientation t_gridOrientation, GridType t_gridType, int t_gridSize, int t_rotateAngle, sf::Vector3i t_startCoords, Config t_config);
+	void correct();
 
 	int m_hexSize;
 	int m_rotateAngle; // the extra (non pointy & flat rotation) degrees of rotation to add to the grid 
@@ -78,4 +81,8 @@ public:
 	sf::Vector2f hex_to_pixel(Layout layout, sf::Vector3i t_hexGridCoordinates);
 	void render(sf::RenderWindow* t_rendWindow);
 	sf::Vector2f rotatePointAboutOrigin(sf::Vector2f t_PosToRotate);
+
+	// Robin 
+	sf::Vector3i startCoords;
+	Config m_config;
 };

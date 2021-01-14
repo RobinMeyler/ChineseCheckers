@@ -6,23 +6,100 @@ Players Game::m_players{ Players::PlayerOne };
 Game::Game() :
 	m_window{ sf::VideoMode{ 1420, 1080, 32 }, "Game Screen" },
 	m_exitGame{ false },
-	m_HexGridCenter(20, sf::Vector2f(1000, 1000), GridOrientation::Pointy, GridType::Hexagon, 10, 0)
+	m_HexGridCenter(30, sf::Vector2f(710, 540), GridOrientation::Pointy, GridType::Hexagon, 4, 0, sf::Vector3i(0,0,0), Config::one)
 {
+	// Have grid
 	m_tilesPtr = m_HexGridCenter.getGrid();
+	float rot;
+
+	std::vector<sf::Vector3i> startCoords;
+
+	startCoords.push_back(sf::Vector3i(-1, 5, -4));
+
+	startCoords.push_back(sf::Vector3i(-5, 4, 1));
+
+	startCoords.push_back(sf::Vector3i(-4, -1, 5));
+
+	startCoords.push_back(sf::Vector3i(1, -5, 4));
+
+	startCoords.push_back(sf::Vector3i(5, -4, -1));
+
+	startCoords.push_back(sf::Vector3i(4, 1, -5));
+
+	
+
+
+
 	for (int i = 0; i < 6; i++)
 	{
 		//find correct location to place wedges
 
 		MyVector3 startingPos;
+		if (i == 3)
+		{
+			rot = 65.f;
+		}
+	
 		float rotateAngleRadians = (60 * (i + 1)) * 3.14159265 / 180;
 		startingPos.x = cos(rotateAngleRadians);
 		startingPos.y = sin(rotateAngleRadians);
 		startingPos.normalise();
-		startingPos.x *= 350; // ????
-		startingPos.y *= 350;
+		startingPos.x *= 260; // ????
+		startingPos.y *= 260;
 
-		HexGrid* p_HexGrid = new HexGrid(20, startingPos + sf::Vector2f(1000, 1000), GridOrientation::Pointy, GridType::Triangle, 9, 60 * i);
+		
+		// Decide start of triangle coords
+		Config con = Config::one;
+		if (i == 1 || i == 4)
+		{
+			con = Config::two;
+		}
+		else if (i == 2 || i == 5)
+		{
+			con = Config::three;
+		}
+
+		HexGrid* p_HexGrid = new HexGrid(30, startingPos + sf::Vector2f(710, 540), GridOrientation::Pointy, GridType::Triangle, 3, (60 * i) -180, startCoords[i], con);
+		p_HexGrid->correct();
 		m_HexGridTriangleWedges.push_back(p_HexGrid);
+	}
+
+	for(auto & tile : m_HexGridCenter.m_gridHexTiles)
+	{
+		m_allTiles.push_back(tile);
+	}
+	for (auto& grid : m_HexGridTriangleWedges)
+	{
+		for (auto& tile : grid->m_gridHexTiles)
+		{
+			m_allTiles.push_back(tile);
+		}
+	}
+
+	for (auto& tile : m_allTiles)
+	{
+		for (sf::Vector3i direction : tile->hex_directions)
+		{
+			sf::Vector3i newCoords = tile->m_gridCoordinates3axis + direction;
+			for (HexTile* hex : m_allTiles)
+			{
+				if (hex->m_gridCoordinates3axis == newCoords)
+				{
+					tile->setNeighbour(hex);
+					break;
+				}
+			}
+		}
+	}
+
+
+	for (auto tile : m_allTiles)
+	{
+		std::cout << "New Set Tile: X: " << tile->m_gridCoordinates3axis.x << " Y: " << tile->m_gridCoordinates3axis.y << " Z: " << tile->m_gridCoordinates3axis.z << std::endl;
+		for (HexTile* neigh : tile->m_neighbours)
+		{
+			std::cout << "Neighbour X: " << neigh->m_gridCoordinates3axis.x << " Y: " << neigh->m_gridCoordinates3axis.y << " Z: " << neigh->m_gridCoordinates3axis.z << std::endl;
+		}
 	}
 }
 
@@ -185,6 +262,9 @@ void Game::update(sf::Time t_deltaTime)
 void Game::render()
 {
 	m_window.clear(sf::Color::Black);
+
+
+
 
 
 

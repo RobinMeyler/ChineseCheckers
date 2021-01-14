@@ -136,6 +136,7 @@
     <ClCompile Include="Player.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Enum.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="HexGrid.h" />
     <ClInclude Include="HexMapStuff.h" />

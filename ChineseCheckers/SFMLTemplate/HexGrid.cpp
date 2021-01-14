@@ -1,12 +1,15 @@
 #include "HexGrid.h"
+#include "MyVector3.h"
 
-HexGrid::HexGrid(int t_hexSize, sf::Vector2f t_originPos, GridOrientation t_gridOrientation, GridType t_gridType, int t_gridSize, int t_startAngle)
+HexGrid::HexGrid(int t_hexSize, sf::Vector2f t_originPos, GridOrientation t_gridOrientation, GridType t_gridType, int t_gridSize, int t_startAngle, sf::Vector3i t_startCoords, Config t_config)
 {
 	m_hexSize = t_hexSize;
 	m_originPos = t_originPos;
 	m_gridOrientation = t_gridOrientation;
 	m_gridType = t_gridType;
 	m_gridSize = t_gridSize;
+	startCoords = t_startCoords;
+	m_config = t_config;
 	//set orientation
 	switch (m_gridOrientation)
 	{
@@ -27,6 +30,17 @@ HexGrid::HexGrid(int t_hexSize, sf::Vector2f t_originPos, GridOrientation t_grid
 	m_rotateAngle = t_startAngle;//for extra grid rotation 
 
 	TileGeneration();
+}
+
+void HexGrid::correct()
+{
+	MyVector3 directionalVec = m_gridHexTiles.at(m_gridSize)->circle.getPosition() - m_gridHexTiles.at(0)->circle.getPosition();
+	
+	for (auto til : m_gridHexTiles)
+	{
+		MyVector3 newPos = til->m_position + directionalVec * 0.5f;
+		til->setPosition(newPos);
+	}
 }
 
 std::vector<HexTile*>* HexGrid::getGrid()
@@ -54,6 +68,10 @@ void HexGrid::TileGeneration()
 					positionCoordinates = hex_to_pixel(m_layout, gridCoordinates3axis);
 
 					HexTile* p_tile = new HexTile(positionCoordinates, gridCoordinates3axis, m_hexSize);
+					p_tile->circle.setFillColor(sf::Color::Blue);
+					p_tile->text_x.setString(std::to_string(p_tile->m_gridCoordinates3axis.x));
+					p_tile->text_y.setString(std::to_string(p_tile->m_gridCoordinates3axis.y));
+					p_tile->text_z.setString(std::to_string(p_tile->m_gridCoordinates3axis.z));
 					m_gridHexTiles.push_back(p_tile);
 				}
 			}
@@ -66,15 +84,104 @@ void HexGrid::TileGeneration()
 		{
 			for (int y = 0; y <= x; y++)
 			{
-				sf::Vector3i gridCoordinates3axis = { x, -y, y - x };
+				sf::Vector3i gridCoordinates3axis;
+				gridCoordinates3axis = { x, -y, y - x };
 				sf::Vector2f positionCoordinates; // position in game world
 				positionCoordinates = hex_to_pixel(m_layout, gridCoordinates3axis);
+
+				if (m_config == Config::one)
+				{
+					if (startCoords.x < 0)
+					{
+						gridCoordinates3axis.x = startCoords.x - x;
+					}
+					else
+					{
+						gridCoordinates3axis.x = startCoords.x + x;
+					}
+					if (startCoords.y < 0)
+					{
+						gridCoordinates3axis.y = startCoords.y - y;
+					}
+					else
+					{
+						gridCoordinates3axis.y = startCoords.y + y;
+					}
+					if (startCoords.z < 0)
+					{
+						gridCoordinates3axis.z = startCoords.z - (y - x);
+					}
+					else
+					{
+						gridCoordinates3axis.z = startCoords.z + (y - x);
+					}
+				}
+				else if (m_config == Config::two)
+				{
+					if (startCoords.x < 0)
+					{
+						gridCoordinates3axis.x = startCoords.x - y;
+					}
+					else
+					{
+						gridCoordinates3axis.x = startCoords.x + y;
+					}
+					if (startCoords.y < 0)
+					{
+						gridCoordinates3axis.y = startCoords.y - (y - x);
+					}
+					else
+					{
+						gridCoordinates3axis.y = startCoords.y + (y - x);
+					}
+					if (startCoords.z < 0)
+					{
+						gridCoordinates3axis.z = startCoords.z - x;
+					}
+					else
+					{
+						gridCoordinates3axis.z = startCoords.z + x;
+					}
+				}
+				else if (m_config == Config::three)
+				{
+					if (startCoords.x < 0)
+					{
+						gridCoordinates3axis.x = startCoords.x - (y - x);
+					}
+					else
+					{
+						gridCoordinates3axis.x = startCoords.x + (y - x);
+					}
+					if (startCoords.y < 0)
+					{
+						gridCoordinates3axis.y = startCoords.y - x;
+					}
+					else
+					{
+						gridCoordinates3axis.y = startCoords.y + x;
+					}
+					if (startCoords.z < 0)
+					{
+						gridCoordinates3axis.z = startCoords.z - y;
+					}
+					else
+					{
+						gridCoordinates3axis.z = startCoords.z + y;
+					}
+				}
+
+
+			
+			
 				if (m_rotateAngle != 0)
 				{
 					positionCoordinates = rotatePointAboutOrigin(positionCoordinates);
 				}
-
 				HexTile* p_tile = new HexTile(positionCoordinates, gridCoordinates3axis, m_hexSize);
+				p_tile->text_x.setString(std::to_string(p_tile->m_gridCoordinates3axis.x));
+				p_tile->text_y.setString(std::to_string(p_tile->m_gridCoordinates3axis.y));
+				p_tile->text_z.setString(std::to_string(p_tile->m_gridCoordinates3axis.z));
 				m_gridHexTiles.push_back(p_tile);
 			}
 		}
@@ -82,23 +189,6 @@ void HexGrid::TileGeneration()
 	}
 	default:
 		break;
-	}
-
-	// Set neighbours
-	for (HexTile* tile : m_gridHexTiles)
-	{
-		for (sf::Vector3i direction : tile->hex_directions)
-		{
-			sf::Vector3i newCoords = tile->m_gridCoordinates3axis + direction;
-			for (HexTile* hex : m_gridHexTiles)
-			{
-				if (hex->m_gridCoordinates3axis == newCoords)
-				{
-					tile->setNeighbour(hex);
-					break;
-				}
-			}
-		}
 	}
 
 	m_gridHexTiles.at(0)->circle.setFillColor(sf::Color::Green);
@@ -142,3 +232,28 @@ sf::Vector2f HexGrid::rotatePointAboutOrigin(sf::Vector2f t_PosToRotate)
 
 	return rotatedPosition;
 }
+
+//if (startCoords.x < 0)
+//{
+//	gridCoordinates3axis.x = startCoords.x - x;
+//}
+//else
+//{
+//	gridCoordinates3axis.x = startCoords.x + x;
+//}
+//if (startCoords.y < 0)
+//{
+//	gridCoordinates3axis.y = startCoords.y - y;
+//}
+//else
+//{
+//	gridCoordinates3axis.y = startCoords.y + y;
+//}
+//if (startCoords.z < 0)
+//{
+//	gridCoordinates3axis.z = startCoords.z - (y - x);
+//}
+//else
+//{
+//	gridCoordinates3axis.z = startCoords.z + (y - x);
+//}
