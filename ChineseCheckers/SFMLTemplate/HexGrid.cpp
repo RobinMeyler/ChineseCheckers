@@ -1,6 +1,6 @@
 #include "HexGrid.h"
 
-HexGrid::HexGrid(int t_hexSize, sf::Vector2f t_originPos, GridOrientation t_gridOrientation, GridType t_gridType, int t_gridSize)
+HexGrid::HexGrid(int t_hexSize, sf::Vector2f t_originPos, GridOrientation t_gridOrientation, GridType t_gridType, int t_gridSize, int t_startAngle)
 {
 	m_hexSize = t_hexSize;
 	m_originPos = t_originPos;
@@ -23,6 +23,8 @@ HexGrid::HexGrid(int t_hexSize, sf::Vector2f t_originPos, GridOrientation t_grid
 	m_layout.orientation == m_orientation;
 	m_layout.origin = m_originPos;
 	m_layout.size = m_hexSize;
+	
+	m_rotateAngle = t_startAngle;//for extra grid rotation 
 
 	TileGeneration();
 }
@@ -67,6 +69,10 @@ void HexGrid::TileGeneration()
 				sf::Vector3i gridCoordinates3axis = { x, -y, y - x };
 				sf::Vector2f positionCoordinates; // position in game world
 				positionCoordinates = hex_to_pixel(m_layout, gridCoordinates3axis);
+				if (m_rotateAngle != 0)
+				{
+					positionCoordinates = rotatePointAboutOrigin(positionCoordinates);
+				}
 
 				HexTile* p_tile = new HexTile(positionCoordinates, gridCoordinates3axis, m_hexSize);
 				m_gridHexTiles.push_back(p_tile);
@@ -94,11 +100,14 @@ void HexGrid::TileGeneration()
 			}
 		}
 	}
+
+	m_gridHexTiles.at(0)->circle.setFillColor(sf::Color::Green);
 }
 
 sf::Vector2f HexGrid::hex_to_pixel(Layout layout, sf::Vector3i t_hexGridCoordinates)
 {
 	Orientation M = layout.orientation;
+	//M.start_angle;
 	int size = layout.size;
 	sf::Vector2f origin = layout.origin;
 	double x = (M.f0 * t_hexGridCoordinates.x + M.f1 * t_hexGridCoordinates.y) * size;
@@ -112,4 +121,24 @@ void HexGrid::render(sf::RenderWindow* t_rendWindow)
 	{
 		m_gridHexTiles.at(i)->render(t_rendWindow);
 	}
+}
+
+sf::Vector2f HexGrid::rotatePointAboutOrigin(sf::Vector2f t_PosToRotate)
+{
+	sf::Vector2f temp = t_PosToRotate;
+	//first undo extra position settings (will be added back after rotation)
+	temp = t_PosToRotate - m_originPos;
+	temp.x = temp.x / m_hexSize;
+	temp.y = temp.y / m_hexSize;
+
+	sf::Vector2f rotatedPosition;
+	rotatedPosition.x = (temp.x * cos(m_rotateAngle * 3.14159265 / 180)) - (temp.y * sin(m_rotateAngle * 3.14159265 / 180));
+	rotatedPosition.y = (temp.x * sin(m_rotateAngle * 3.14159265 / 180)) + (temp.y * cos(m_rotateAngle * 3.14159265 / 180));
+	
+	//add position settings back
+	rotatedPosition.x = rotatedPosition.x * m_hexSize;
+	rotatedPosition.y = rotatedPosition.y * m_hexSize;
+	rotatedPosition = rotatedPosition + m_originPos;
+
+	return rotatedPosition;
 }

@@ -7,6 +7,7 @@
 #include "HexGrid.h"
 #include "MyVector3.h"
 
+
 enum class Players {
 	PlayerOne,
 	PlayerTwo
