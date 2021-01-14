@@ -177,7 +177,7 @@ void Game::render()
 
 	for (int i = 0; i < 6; i++)
 	{
-		HexGrid* p_HexGrid = new HexGrid(30, sf::Vector2f(600 + i*60, 275), GridOrientation::Pointy, GridType::Triangle, 3);
+		HexGrid* p_HexGrid = new HexGrid(30, sf::Vector2f(600 + i, 275), GridOrientation::Pointy, GridType::Triangle, 3);
 		p_HexGrid->render(&m_window);
 	}
 
