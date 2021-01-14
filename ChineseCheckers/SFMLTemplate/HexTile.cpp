@@ -50,6 +50,11 @@ void HexTile::setPosition(MyVector3 t_newPos)
     text_z.setPosition(sf::Vector2f(m_position.x + 10, m_position.y - 10));
 }
 
+void HexTile::checkHops(sf::Vector3i t_direction)
+{
+   
+}
+
 sf::Vector3i HexTile::hex_add(HexTile t_hexTile)
 {
     return sf::Vector3i(this->m_gridCoordinates3axis.x + t_hexTile.m_gridCoordinates3axis.x, this->m_gridCoordinates3axis.y + t_hexTile.m_gridCoordinates3axis.y, this->m_gridCoordinates3axis.z + t_hexTile.m_gridCoordinates3axis.z);

@@ -17,6 +17,9 @@ public:
 	void setNeighbour(HexTile* t_neighbour);
 	void render(sf::RenderWindow* t_rendWindow);
 	void setPosition(MyVector3 t_newPos);
+
+	void checkHops(sf::Vector3i t_direction);
+
 	MyVector3 m_position; // The game world position of the Hex tile 
 	sf::Vector3i m_gridCoordinates3axis; // the grid coordinates, (on three axis), hex coordinates
 	sf::CircleShape circle;

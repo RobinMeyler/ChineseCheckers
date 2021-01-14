@@ -60,6 +60,8 @@ private:
 	HexGrid m_HexGridCenter;
 	std::vector<HexGrid*> m_HexGridTriangleWedges;
 	std::vector<HexTile*> m_allTiles;
+	void checkHops(sf::Vector3i t_direction, HexTile* t_followTile);
+
 
 	Player m_player;
 	AI m_AI;
