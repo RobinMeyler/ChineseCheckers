@@ -5,6 +5,7 @@
 #include "Player.h"
 #include "NPC.h"
 #include "HexGrid.h"
+#include "MyVector3.h"
 class Game
 {
 public:

@@ -20,6 +20,7 @@ struct Orientation
 };
 const Orientation layout_pointy = Orientation(sqrt(3.0), sqrt(3.0) / 2.0, 0.0, 3.0 / 2.0, sqrt(3.0) / 3.0, -1.0 / 3.0, 0.0, 2.0 / 3.0, 0.5);
 const Orientation layout_flat = Orientation(3.0 / 2.0, 0.0, sqrt(3.0) / 2.0, sqrt(3.0), 2.0 / 3.0, 0.0, -1.0 / 3.0, sqrt(3.0) / 3.0, 0.0);
+
 struct Layout
 {
 	Orientation orientation;
@@ -32,8 +33,9 @@ struct Layout
 class HexGrid
 {
 public:
-	HexGrid(int t_hexSize, sf::Vector2f t_originPos, GridOrientation t_gridOrientation, GridType t_gridType, int t_gridSize);
+	HexGrid(int t_hexSize, sf::Vector2f t_originPos, GridOrientation t_gridOrientation, GridType t_gridType, int t_gridSize, int t_rotateAngle);
 	int m_hexSize;
+	int m_rotateAngle; // the extra (non pointy & flat rotation) degrees of rotation to add to the grid 
 	sf::Vector2f m_originPos; // origin game world position of grid
 	Orientation m_orientation;
 	Layout m_layout;
@@ -46,4 +48,5 @@ public:
 	void TileGeneration(); //Generates grid tiles
 	sf::Vector2f hex_to_pixel(Layout layout, sf::Vector3i t_hexGridCoordinates);
 	void render(sf::RenderWindow* t_rendWindow);
+	sf::Vector2f rotatePointAboutOrigin(sf::Vector2f t_PosToRotate);
 };

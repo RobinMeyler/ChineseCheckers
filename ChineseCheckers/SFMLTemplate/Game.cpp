@@ -3,12 +3,22 @@
 Game::Game() :
 	m_window{ sf::VideoMode{ 3840, 2160, 32 }, "Game Screen" },
 	m_exitGame{ false },
-	m_HexGridCenter(20, sf::Vector2f(1000, 1000), GridOrientation::Flat, GridType::Hexagon, 10)
+	m_HexGridCenter(20, sf::Vector2f(1000, 1000), GridOrientation::Pointy, GridType::Hexagon, 10, 0)
 {
 	for (int i = 0; i < 6; i++)
 	{
+		//find correct location to place wedges
 
-		HexGrid* p_HexGrid = new HexGrid(20, sf::Vector2f(1000, 1000), GridOrientation::Flat, GridType::Triangle, 10);
+		MyVector3 startingPos;
+		float rotateAngleRadians = (60 * (i + 1)) * 3.14159265 / 180;
+		startingPos.x = cos(rotateAngleRadians);
+		startingPos.y = sin(rotateAngleRadians);
+		startingPos.normalise();
+		startingPos.x *= 350; // ????
+		startingPos.y *= 350;
+
+		HexGrid* p_HexGrid = new HexGrid(20, startingPos + sf::Vector2f(1000, 1000), GridOrientation::Pointy, GridType::Triangle, 9, 60 * i);
+		m_HexGridTriangleWedges.push_back(p_HexGrid);
 	}
 }
 
@@ -83,6 +93,10 @@ void Game::render()
 	//m_player.render(m_window);
 	//m_npc.render(m_window);
 	m_HexGridCenter.render(&m_window);
+	for (int i = 0; i < m_HexGridTriangleWedges.size(); i++)
+	{
+		m_HexGridTriangleWedges.at(i)->render(&m_window);
+	}
 	m_window.display();
 }
 
