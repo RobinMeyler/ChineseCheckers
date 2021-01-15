@@ -1,5 +1,27 @@
 #include "HexTile.h"
 
+HexTile::HexTile(const HexTile& other) //copy constructor
+{
+    m_position = *new MyVector3(other.m_position);
+    m_gridCoordinates3axis = *new sf::Vector3i(other.m_gridCoordinates3axis);
+    isOccupied = *new bool(other.isOccupied);
+    circle = *new sf::CircleShape(other.circle);
+}
+
+void HexTile::copyNeighbours(std::vector<HexTile*> t_neighboursToCopy, std::vector<HexTile*> t_copyOfAllTiles)
+{
+    for (auto neighbour : t_neighboursToCopy) // loop each neighbour to copy
+    {
+        for (auto tile : t_copyOfAllTiles) // loop through all new copy tiles to find matching neighbour
+        {
+            if (tile->m_gridCoordinates3axis == neighbour->m_gridCoordinates3axis)
+            {
+                m_neighbours.push_back(tile);
+            }
+        }
+    }
+}
+
 void HexTile::setupCircle()
 {
     m_font.loadFromFile("digital-7.ttf");
@@ -51,9 +73,66 @@ void HexTile::setPosition(MyVector3 t_newPos)
     text_z.setPosition(sf::Vector2f(m_position.x + 10, m_position.y - 10));
 }
 
-void HexTile::checkHops(sf::Vector3i t_direction)
+HexTile* HexTile::checkHops(sf::Vector3i t_direction, HexTile* t_followTile)
 {
-   
+    if (t_followTile->isOccupied == true)		// If it's filled
+    {
+        t_followTile->isMarked = true;
+        sf::Vector3i newCoords = t_followTile->m_gridCoordinates3axis + t_direction;
+        for (auto& tile : t_followTile->m_neighbours)
+        {
+            if (tile->m_gridCoordinates3axis == newCoords)	// If spot at new coords exists
+            {
+                if (tile->isOccupied == false)				// and is not filled
+                {
+                    checkHops(t_direction, tile);			// Mark and check it
+                }
+                else
+                {
+                    return nullptr;
+                }
+            }
+        }
+    }
+    else			// If not filled
+    {
+        t_followTile->isMarked = true;
+        //t_followTile->circle.setOutlineColor(sf::Color::Green);
+        for (auto& neighbours : t_followTile->m_neighbours)
+        {
+            if (neighbours->isOccupied == true && neighbours->isMarked == false)
+            {
+                // Recursive checks
+                sf::Vector3i direction = neighbours->m_gridCoordinates3axis - t_followTile->m_gridCoordinates3axis;
+                checkHops(direction, neighbours);
+            }
+        }
+    }
+
+    return t_followTile;
+}
+
+std::vector<HexTile*> HexTile::getPossibleMovesFromThisTile()
+{
+    possibleMoves.clear();
+    for (auto& neighbour : m_neighbours) //each neighbour
+    {
+        if (neighbour->isOccupied == false)
+        {
+            neighbour->isMarked = true;
+            possibleMoves.push_back(neighbour);
+            //neighbour->circle.setOutlineColor(sf::Color::Green);
+        }
+        else
+        {
+            // Recursive checks
+            sf::Vector3i direction = neighbour->m_gridCoordinates3axis - m_gridCoordinates3axis;
+            HexTile* temp = checkHops(direction, neighbour);
+            if (temp != nullptr && temp != neighbour)
+                possibleMoves.push_back(temp);
+        }
+    }
+    return possibleMoves;
 }
 
 sf::Vector3i HexTile::hex_add(HexTile t_hexTile)

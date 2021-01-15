@@ -300,15 +300,22 @@ void Game::update(sf::Time t_deltaTime)
 		runEvaluation();
 		Game::m_players = Players::PlayerOne;
 		// Use Min Max to determine which is best
+		/*for (int i = 0; i < m_AI.m_marbles.size(); i++)
+		{
+			m_AI.minimax(m_AI.m_marbles.at(i).tile, 8, false, -std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
+		}*/
 
-
+		m_AI.minimax(m_AI.m_marbles, m_AI.m_oppositionMarbles, m_AI.m_marbles.at(0).tile, 5, true, m_AI.getCopyOfMapTiles(m_allTiles));
+		
 		// Make move
+		m_AI.mostIdealMove.piece->tile->isOccupied = false;
+		m_AI.mostIdealMove.piece->tile = m_AI.mostIdealMove.tileToMoveTo;
+		m_AI.mostIdealMove.piece->m_circle.setPosition(m_AI.mostIdealMove.piece->tile->m_position);
+		m_AI.mostIdealMove.piece->tile->isOccupied = true;
 
-
-
-
-
-
+		m_gamePhase = Phase::SelectingMarble;
+		// Swap turn;
+		Game::m_players = Players::PlayerOne;
 	}
 
 	if (m_exitGame)
