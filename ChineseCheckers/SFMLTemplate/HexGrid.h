@@ -1,5 +1,5 @@
 #pragma once
-// Author: Josh Tyrrell Browne
+// Author: Josh Tyrrell Browne & Robin Meyler
 // Date: Jan 2021
 
 #include "HexTile.h"

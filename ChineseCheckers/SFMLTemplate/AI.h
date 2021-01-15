@@ -1,6 +1,10 @@
 #pragma once
 #include <SFML\Graphics.hpp>
 #include "HexTile.h"
+#include "GamePiece.h"
+#include <iostream>
+#include <algorithm>
+
 class AI
 {
 public:
@@ -8,15 +12,14 @@ public:
 	~AI();
 	void update(sf::Time t_deltaTime);
 	void render(sf::RenderWindow& t_window);
-
-
-	sf::Sprite m_sprite;
-	sf::Texture m_texture;
+	float minimax(HexTile* node, int depth, bool maximizingPlayer, float alpha, float beta);
 
 	int screenWidth;
 	int screenHeigth;
 
-
-	std::vector<sf::CircleShape> m_marbles;
-	HexTile* m_tile;
+	std::vector<GamePiece> m_marbles; // collection of AI's marble pieces
+	std::vector<GamePiece> m_oppositionMarbles; // collection of oppositions marble pieces
+	static HexTile* goalNode; // the position of the furthest away opposition home node
+	GamePiece* pieceToMove;
+	GamePiece* positionToMoveTo;
 };

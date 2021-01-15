@@ -16,5 +16,4 @@ public:
 	sf::Font m_ArialBlackfont; // font used by message
 
 	std::vector<GamePiece> m_marbles;
-
 };

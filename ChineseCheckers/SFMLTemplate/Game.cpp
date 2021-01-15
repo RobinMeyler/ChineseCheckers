@@ -77,8 +77,8 @@ Game::Game() :
 		{
 			for (int j = 0; j < p_HexGrid->m_gridHexTiles.size(); j++)
 			{
-				m_AI.m_marbles.at(j).setPosition(p_HexGrid->m_gridHexTiles.at(j)->m_position);
-				m_AI.m_tile = p_HexGrid->m_gridHexTiles.at(j);
+				m_AI.m_marbles.at(j).m_circle.setPosition(p_HexGrid->m_gridHexTiles.at(j)->m_position);
+				m_AI.m_marbles.at(j).tile = p_HexGrid->m_gridHexTiles.at(j);
 				p_HexGrid->m_gridHexTiles.at(j)->isOccupied = true;
 			}
 		}

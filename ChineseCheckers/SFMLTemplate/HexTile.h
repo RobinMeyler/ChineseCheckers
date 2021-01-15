@@ -1,5 +1,5 @@
 #pragma once
-// Author: Josh Tyrrell Browne
+// Author: Josh Tyrrell Browne & Robin Meyler
 // Date: Jan 2021
 #include <iostream>
 #include <vector>
@@ -21,17 +21,12 @@ public:
 	sf::Vector3i m_gridCoordinates3axis; // the grid coordinates, (on three axis), hex coordinates
 	sf::CircleShape circle;
 	int m_cellSize;
-	//HexMap* map;
 
 	const std::vector<sf::Vector3i> hex_directions = { sf::Vector3i(1, 0, -1), sf::Vector3i(1, -1, 0), sf::Vector3i(0, -1, 1), sf::Vector3i(-1, 0, 1), sf::Vector3i(-1, 1, 0), sf::Vector3i(0, 1, -1) };
 
 
 	sf::Vector3i hex_add(HexTile t_hexTile); // returns position from 2 added hextile positions
 	sf::Vector3i hex_subtract(HexTile t_hexTile);
-	//sf::Vector3f hex_scale(HexTile t_hexTile);
-	
-	//HexTile hex_rotate_left(HexTile t_hexTile);
-	//HexTile hex_rotate_right(HexTile t_hexTile);
 
 	sf::Vector3i hex_direction(int t_direction); //returns the direction in 3 axis hex coordinates (for grid)
 
@@ -43,4 +38,6 @@ public:
 	sf::Text text_y;
 	sf::Text text_z;
 	sf::Font m_font;
+
+	float heuristicValue;
 };
