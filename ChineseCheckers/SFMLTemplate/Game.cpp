@@ -4,13 +4,20 @@
 Players Game::m_players{ Players::PlayerOne };
 
 Game::Game() :
-	m_window{ sf::VideoMode{ 1420, 1080, 32 }, "Game Screen" },
+	m_window{ sf::VideoMode{ 1420, 1080, 32 }, "Chinese Checkers" },
 	m_exitGame{ false },
-	m_gamePhase{ Phase::SelectingMarble},
+	m_gamePhase{ Phase::SelectingPieceToMove},
 	m_HexGridCenter(30, sf::Vector2f(710, 540), GridOrientation::Pointy, GridType::Hexagon, 4, 0, sf::Vector3i(0,0,0), Config::one)
 {
 	// Have grid
 	m_tilesPtr = m_HexGridCenter.getGrid();
+
+	m_font.loadFromFile("digital-7.ttf");
+	m_gameText.setCharacterSize(80);
+	m_gameText.setFont(m_font);
+	m_gameText.setFillColor(sf::Color::White);
+	m_gameText.setPosition(sf::Vector2f(500, 50));
+	m_gameText.setString("Player's turn!");
 
 	std::vector<sf::Vector3i> startCoords;
 	startCoords.push_back(sf::Vector3i(-1, 5, -4));
@@ -21,6 +28,7 @@ Game::Game() :
 	startCoords.push_back(sf::Vector3i(4, 1, -5));
 	sf::Color colours[6] = { sf::Color::Red, sf::Color::Green, sf::Color::Yellow, sf::Color::Blue,  sf::Color::Magenta, sf::Color::Cyan };
 
+	// Making Triangles
 	for (int i = 0; i < 6; i++)
 	{
 		//find correct location to place wedges
@@ -67,14 +75,15 @@ Game::Game() :
 			{
 				p_HexGrid->m_gridHexTiles.at(j)->isBlueFinishSlot = true;
 				m_blueFinishSpots.push_back(p_HexGrid->m_gridHexTiles.at(j));
-				m_AI.m_marbles.at(j).m_circle.setPosition(p_HexGrid->m_gridHexTiles.at(j)->m_position);
+				/*m_AI.m_marbles.at(j).m_circle.setPosition(p_HexGrid->m_gridHexTiles.at(j)->m_position);
 				m_AI.m_marbles.at(j).tile = p_HexGrid->m_gridHexTiles.at(j);
-				p_HexGrid->m_gridHexTiles.at(j)->isOccupied = true;
+				p_HexGrid->m_gridHexTiles.at(j)->isOccupied = true;*/
 			}
 		}
 		m_HexGridTriangleWedges.push_back(p_HexGrid);
 	}
 
+	// Combine Grids
 	for(auto & tile : m_HexGridCenter.m_gridHexTiles)
 	{
 		m_allTiles.push_back(tile);
@@ -87,6 +96,7 @@ Game::Game() :
 		}
 	}
 
+	// Set Neighbours
 	for (auto& tile : m_allTiles)
 	{
 		for (sf::Vector3i direction : tile->hex_directions)
@@ -102,35 +112,45 @@ Game::Game() :
 			}
 		}
 	}
-	//m_AI.m_marbles.at(0).m_circle.setPosition(m_allTiles.at(15)->m_position);
-	//m_AI.m_marbles.at(0).tile = m_allTiles.at(15);
+	m_AI.m_marbles.at(0).m_circle.setPosition(m_allTiles.at(3)->m_position);
+	m_AI.m_marbles.at(0).tile = m_allTiles.at(3);
+	m_allTiles.at(3)->isOccupied = true;
 
-	//m_AI.m_marbles.at(1).m_circle.setPosition(m_allTiles.at(23)->m_position);
-	//m_AI.m_marbles.at(1).tile = m_allTiles.at(23);
+	m_AI.m_marbles.at(1).m_circle.setPosition(m_allTiles.at(23)->m_position);
+	m_AI.m_marbles.at(1).tile = m_allTiles.at(23);
+	m_allTiles.at(23)->isOccupied = true;
 
-	//m_AI.m_marbles.at(2).m_circle.setPosition(m_allTiles.at(9)->m_position);
-	//m_AI.m_marbles.at(2).tile = m_allTiles.at(9);
+	m_AI.m_marbles.at(2).m_circle.setPosition(m_allTiles.at(9)->m_position);
+	m_AI.m_marbles.at(2).tile = m_allTiles.at(9);
+	m_allTiles.at(9)->isOccupied = true;
 
-	//m_AI.m_marbles.at(3).m_circle.setPosition(m_allTiles.at(6)->m_position);
-	//m_AI.m_marbles.at(3).tile = m_allTiles.at(6);
+	m_AI.m_marbles.at(3).m_circle.setPosition(m_allTiles.at(6)->m_position);
+	m_AI.m_marbles.at(3).tile = m_allTiles.at(6);
+	m_allTiles.at(6)->isOccupied = true;
 
-	//m_AI.m_marbles.at(4).m_circle.setPosition(m_allTiles.at(20)->m_position);
-	//m_AI.m_marbles.at(4).tile = m_allTiles.at(20);
+	m_AI.m_marbles.at(4).m_circle.setPosition(m_allTiles.at(14)->m_position);
+	m_AI.m_marbles.at(4).tile = m_allTiles.at(14);
+	m_allTiles.at(14)->isOccupied = true;
 
-	//m_AI.m_marbles.at(5).tile = m_allTiles.at(24);
-	//m_AI.m_marbles.at(5).m_circle.setPosition(m_allTiles.at(24)->m_position);
+	m_AI.m_marbles.at(5).tile = m_allTiles.at(16);
+	m_AI.m_marbles.at(5).m_circle.setPosition(m_allTiles.at(39)->m_position);
+	m_allTiles.at(39)->isOccupied = true;
 
-	//m_AI.m_marbles.at(6).tile = m_allTiles.at(12);
-	//m_AI.m_marbles.at(6).m_circle.setPosition(m_allTiles.at(12)->m_position);
+	m_AI.m_marbles.at(6).tile = m_allTiles.at(12);
+	m_AI.m_marbles.at(6).m_circle.setPosition(m_allTiles.at(12)->m_position);
+	m_allTiles.at(12)->isOccupied = true;
 
-	//m_AI.m_marbles.at(7).tile = m_allTiles.at(27);
-	//m_AI.m_marbles.at(7).m_circle.setPosition(m_allTiles.at(27)->m_position);
+	m_AI.m_marbles.at(7).tile = m_allTiles.at(41);
+	m_AI.m_marbles.at(7).m_circle.setPosition(m_allTiles.at(41)->m_position);
+	m_allTiles.at(41)->isOccupied = true;
 
-	//m_AI.m_marbles.at(8).tile = m_allTiles.at(4);
-	//m_AI.m_marbles.at(8).m_circle.setPosition(m_allTiles.at(4)->m_position);
+	m_AI.m_marbles.at(8).tile = m_allTiles.at(4);
+	m_AI.m_marbles.at(8).m_circle.setPosition(m_allTiles.at(4)->m_position);
+	m_allTiles.at(4)->isOccupied = true;
 
-	//m_AI.m_marbles.at(9).tile = m_allTiles.at(34);
-	//m_AI.m_marbles.at(9).m_circle.setPosition(m_allTiles.at(34)->m_position);
+	m_AI.m_marbles.at(9).tile = m_allTiles.at(3);
+	m_AI.m_marbles.at(9).m_circle.setPosition(m_allTiles.at(3)->m_position);
+	m_allTiles.at(3)->isOccupied = true;
 }
 
 Game::~Game()
@@ -178,7 +198,7 @@ void Game::processEvents()
 				m_mousePosition = sf::Mouse::getPosition(m_window);
 				if (event.mouseButton.button == sf::Mouse::Left)
 				{
-					m_leftPressed = true;
+					m_leftMousePressed = true;
 				}
 				else if (event.mouseButton.button == sf::Mouse::Right)
 				{
@@ -186,130 +206,25 @@ void Game::processEvents()
 				}
 			}
 		}
-		if (event.type == sf::Event::MouseButtonReleased)
-		{
-			if (event.mouseButton.button == sf::Mouse::Left)
-			{
-				
-			}
-		}
 	}
 }
 
 void Game::update(sf::Time t_deltaTime)
 {
-	if (Game::m_players == Players::PlayerOne)
-	{
-		if (m_gamePhase == Phase::SelectingMarble)
-		{
-			if (m_leftPressed == true)
-			{
-				bool found = false;
-				for (auto & piece : m_player.m_marbles)
-				{
-					MyVector3 distance = piece.m_circle.getPosition() - (sf::Vector2f)m_mousePosition;
-					if (distance.length() < 30)
-					{
-						// Collision found
-						m_pressedToPlayTile = piece.tile;
-						m_pieceInPlay = &piece;
-						found = true;
-						break;
-					}
-				}
-				if (found == true)
-				{
-					m_gamePhase = Phase::Evaluating;
-				}
-				m_leftPressed = false;
-			}
-		}
-		if (m_gamePhase == Phase::Evaluating)
-		{
-			for (auto &neighbours : m_pressedToPlayTile->m_neighbours)
-			{
-				if (neighbours->isOccupied == false)
-				{
-					neighbours->isMarked = true;
-					neighbours->circle.setOutlineColor(sf::Color::Green);
-				}
-				else 
-				{
-					// Recursive checks
-					sf::Vector3i direction = neighbours->m_gridCoordinates3axis - m_pressedToPlayTile->m_gridCoordinates3axis;
-					checkHops(direction, neighbours);
-				}
-			}
-			m_gamePhase = Phase::SelectingMove;
-		}
-		else if (m_gamePhase == Phase::SelectingMove)
-		{
-			// Takes input
-			if (m_leftPressed == true)
-			{
-				bool found = false;
-				for (HexTile* tile : m_allTiles)
-				{
-					MyVector3 distance = tile->circle.getPosition() - (sf::Vector2f)m_mousePosition;
-					if (distance.length() < tile->m_cellSize)
-					{
-						if (tile->isMarked == true && tile->isOccupied == false)
-						{
-							found = true;
-							m_pressedToMoveToTile = tile;
-							break;
-						}
-					}
-				}
-				if (found == true)
-				{
-					m_gamePhase = Phase::Moving;
-				}
-				else
-				{
-					m_gamePhase = Phase::SelectingMarble;
-				}
+	checkForWin();
 
-				// Reset regardless
-				for (HexTile* tile : m_allTiles)
-				{
-					tile->isMarked = false;
-					tile->circle.setOutlineColor(tile->circle.getFillColor());
-				}
-				
-				m_leftPressed = false;
-			}
-		}
-		else if (m_gamePhase == Phase::Moving)
+	if (m_gameFinished != true)
+	{
+		if (Game::m_players == Players::PlayerOne)
 		{
-			// Move the Player Texture to the new position over a few frames
-			m_pieceInPlay->tile->isOccupied = false;
-			m_pieceInPlay->tile = m_pressedToMoveToTile;
-			m_pieceInPlay->m_circle.setPosition(m_pressedToMoveToTile->m_position);
-			m_pressedToMoveToTile->isOccupied = true;
-			m_gamePhase = Phase::SelectingMarble;
-			// Swap turn;
-			Game::m_players = Players::PlayerTwo;
+			runPlayerStates();
+		}
+		else
+		{
+			runAIStates();
 		}
 	}
-	else if (Game::m_players == Players::PlayerTwo)
-	{
-		// AI ( For now )
 
-		// Run evaluation function
-		runEvaluation();
-		Game::m_players = Players::PlayerOne;
-		// Use Min Max to determine which is best
-
-
-		// Make move
-
-
-
-
-
-
-	}
 
 	if (m_exitGame)
 	{
@@ -319,8 +234,9 @@ void Game::update(sf::Time t_deltaTime)
 
 void Game::render()
 {
-	m_window.clear(sf::Color::Black);
+	m_window.clear(sf::Color(0.2f*255, 0.3f * 255, 0.3f * 255, 1.0f));
 
+	m_window.draw(m_gameText);
 	m_HexGridCenter.render(&m_window);
 	for (int i = 0; i < m_HexGridTriangleWedges.size(); i++)
 	{
@@ -333,6 +249,59 @@ void Game::render()
 	m_window.display();
 }
 
+void Game::runPlayerStates()
+{
+	if (m_gamePhase == Phase::SelectingPieceToMove)
+	{
+		if (m_leftMousePressed == true)
+		{
+			checkIfGamePiece();
+		}
+	}
+	if (m_gamePhase == Phase::Evaluating)
+	{
+		evaluatePossibleMoves();
+	}
+	else if (m_gamePhase == Phase::SelectingTileToMoveTo)
+	{
+		if (m_leftMousePressed == true)
+		{
+			checkIfMoveAllowed();
+		}
+	}
+	else if (m_gamePhase == Phase::Moving)
+	{
+		moveGamePiece();
+	}
+}
+
+void Game::runAIStates()
+{
+	// AI ==============================================================
+
+		// Run evaluation function ============
+	runEvaluation();
+
+
+	// Use Min Max to determine which is best ==========================
+	// For each tile:
+	// Check AI's highest scoring move, then the players lowest scoring in that case, the players best scoring move etc
+	// Compare the best Tile with the highest max after deep check and move to that one
+
+
+	// Make move =======================================================
+	// Set occupied
+	// set last not occupied
+	// check if win ready
+	// Set positions
+
+
+	Game::m_players = Players::PlayerOne;
+	m_gameText.setString("Player's turn!");
+}
+
+
+// Recursive
 void Game::checkHops(sf::Vector3i t_direction, HexTile* t_followTile)
 {
 	if (t_followTile->isOccupied == true)		// If it's filled
@@ -368,42 +337,112 @@ void Game::checkHops(sf::Vector3i t_direction, HexTile* t_followTile)
 			}
 		}
 	}
-
 	return;
 }
 
 void Game::runEvaluation()
 {
+
+	// Distance, 
+	GamePiece* furthestBackMarble = nullptr;
+	GamePiece* furthestForwardMarble = nullptr;
+	int checkY = 10;
+	int checkYOther = -10;
 	for (auto& gamePiece : m_AI.m_marbles)		// For Each AI Piece
 	{
-		int shortestPathToEnd = 30;
-		HexTile* shortestEnd = nullptr;
-		for (auto& finishTile : m_redFinishSpots)		// for each tile in the endZone, find the closest one
+		if (gamePiece.tile->m_gridCoordinates3axis.y < checkY)
 		{
-			int result = findAxisdiff(finishTile, gamePiece.tile);
-			
-			if (result < shortestPathToEnd)
-			{
-				shortestPathToEnd = result;
-				shortestEnd = finishTile;
-			}
+			furthestBackMarble = &gamePiece;
+			checkY = gamePiece.tile->m_gridCoordinates3axis.y;
 		}
-
-		// Now have the shortest Path
-		for (auto& tile : m_allTiles)				// for every Tile
+		if (gamePiece.tile->m_gridCoordinates3axis.y > checkYOther)
 		{
-			int result = findAxisdiff(tile, shortestEnd);		// Find the distance to the closest end tile
-			
-			int newScore = shortestPathToEnd - result;		// New score is the distance from gamePiece to the end - the actual diatance to the end
-			if (tile->m_AiScoreValueMinMax < newScore)		// If it isn't already score higher
-			{
-				tile->m_AiScoreValueMinMax = newScore;		// If the tile is further away than the player it will be -1, -2 etc, if closer 1, 2 etc
-			}
-			
-			tile->text_x.setString(std::to_string(tile->m_AiScoreValueMinMax));
+			furthestForwardMarble = &gamePiece;
+			checkYOther = gamePiece.tile->m_gridCoordinates3axis.y;
 		}
 	}
 
+	// Now have the shortest Path
+	for (auto& tile : m_allTiles)				// for every Tile
+	{
+		tile->m_AiScoreValueMinMax = 0;
+	}
+
+	for (auto& gamePiece : m_AI.m_marbles)		// For Each AI Piece
+	{
+		if (gamePiece.tile->winReady == false)
+		{
+			int furthestPathToEnd = 0;
+			HexTile* End = nullptr;
+			for (auto& finishTile : m_redFinishSpots)		// for each tile in the endZone, find the closest one
+			{
+				int result = findAxisdiff(finishTile, gamePiece.tile);
+
+				if (result > furthestPathToEnd)
+				{
+					furthestPathToEnd = result;
+					End = finishTile;
+				}
+			}
+
+			
+
+			// Now have the shortest Path
+			for (auto& tile : m_allTiles)				// for every Tile
+			{
+				//tile->m_AiScoreValueMinMax = 0;
+				
+				float distanceToEnd = findAxisdiff(tile, End);		// Find the distance to the furthest end tile
+				float inversedDistance = furthestPathToEnd - distanceToEnd;		// New score is the distance from gamePiece to the end - the actual diatance to the end
+				int YaxisValue = tile->m_gridCoordinates3axis.y;
+				if (tile->m_gridCoordinates3axis.y >= furthestBackMarble->tile->m_gridCoordinates3axis.y)
+				{
+					YaxisValue = -tile->m_gridCoordinates3axis.y;
+				}
+				float evaluation = (YaxisValue* 0.25f) + (inversedDistance * 2.f) + (distanceToEnd * 0.8f);
+
+				if (tile->m_AiScoreValueMinMax < evaluation)		// If it isn't already score higher
+				{
+					tile->m_AiScoreValueMinMax = evaluation;		// If the tile is further away than the player it will be -1, -2 etc, if closer 1, 2 etc
+				}
+			
+				//tile->text_x.setString(std::to_string((int)tile->m_AiScoreValueMinMax));
+			}
+		}
+	}
+	float difference = furthestForwardMarble->tile->m_gridCoordinates3axis.y - furthestBackMarble->tile->m_gridCoordinates3axis.y;
+	for (auto& tile : furthestBackMarble->tile->m_neighbours)
+	{
+		if (tile->m_gridCoordinates3axis.y > furthestBackMarble->tile->m_gridCoordinates3axis.y)
+		{
+			if (tile->isOccupied == true)
+			{
+				sf::Vector3i direction = tile->m_gridCoordinates3axis - furthestBackMarble->tile->m_gridCoordinates3axis;
+				sf::Vector3i newCoords = tile->m_gridCoordinates3axis + direction;
+				for (auto& innerTile : tile->m_neighbours)
+				{
+					if (innerTile->m_gridCoordinates3axis == newCoords)	// If spot at new coords exists
+					{
+						if (innerTile->isOccupied == false)
+						{
+							innerTile->m_AiScoreValueMinMax += difference + 2;
+						}
+					}
+				}
+			}
+			else
+			{
+				tile->m_AiScoreValueMinMax += difference;
+			}
+			
+		}
+	}
+	
+	// Now have the shortest Path
+	for (auto& tile : m_allTiles)				// for every Tile
+	{
+		tile->text_x.setString(std::to_string((int)tile->m_AiScoreValueMinMax));
+	}
 }
 
 int Game::findAxisdiff(HexTile* one, HexTile* two)
@@ -426,6 +465,143 @@ int Game::findAxisdiff(HexTile* one, HexTile* two)
 		largestAxisDiff = distanceZ;
 	}
 	return largestAxisDiff;
+}
+
+void Game::checkForWin()
+{
+	bool winBlue = false;
+	for (auto& finish : m_blueFinishSpots)
+	{
+		if (finish->isOccupied == true && finish->winReady == true)
+		{
+			winBlue = true;
+		}
+		else
+		{
+			winBlue = false;
+			break;
+		}
+	}
+	if (winBlue == true)
+	{
+		// Win player
+		m_gameText.setString("Player wins! :)");
+		m_gameFinished = true;
+	}
+	bool winRed = false;
+	for (auto& finish : m_redFinishSpots)
+	{
+		if (finish->isOccupied == true && finish->winReady == true)
+		{
+			winRed = true;
+		}
+		else
+		{
+			winRed = false;
+			break;
+		}
+	}
+	if (winRed == true)
+	{
+		// Win AI
+		m_gameText.setString("AI wins! :(");
+		m_gameFinished = true;
+	}
+}
+
+void Game::checkIfGamePiece()
+{
+	bool found = false;
+	for (auto& piece : m_player.m_marbles)
+	{
+		MyVector3 distance = piece.m_circle.getPosition() - (sf::Vector2f)m_mousePosition;
+		if (distance.length() < 30)
+		{
+			// Collision found
+			m_pressedToPlayTile = piece.tile;
+			m_pieceInPlay = &piece;
+			found = true;
+			break;
+		}
+	}
+	if (found == true)
+	{
+		m_gamePhase = Phase::Evaluating;
+	}
+	m_leftMousePressed = false;
+}
+
+void Game::evaluatePossibleMoves()
+{
+	for (auto& neighbours : m_pressedToPlayTile->m_neighbours)
+	{
+		if (neighbours->isOccupied == false)
+		{
+			neighbours->isMarked = true;
+			neighbours->circle.setOutlineColor(sf::Color::Green);
+		}
+		else
+		{
+			// Recursive checks
+			sf::Vector3i direction = neighbours->m_gridCoordinates3axis - m_pressedToPlayTile->m_gridCoordinates3axis;
+			checkHops(direction, neighbours);
+		}
+	}
+	m_gamePhase = Phase::SelectingTileToMoveTo;
+}
+
+void Game::checkIfMoveAllowed()
+{
+	bool found = false;
+	for (HexTile* tile : m_allTiles)
+	{
+		MyVector3 distance = tile->circle.getPosition() - (sf::Vector2f)m_mousePosition;
+		if (distance.length() < tile->m_cellSize)
+		{
+			if (tile->isMarked == true && tile->isOccupied == false)
+			{
+				found = true;
+				m_pressedToMoveToTile = tile;
+				break;
+			}
+		}
+	}
+	if (found == true)
+	{
+		m_gamePhase = Phase::Moving;
+	}
+	else
+	{
+		m_gamePhase = Phase::SelectingPieceToMove;
+	}
+
+	// Reset regardless
+	for (HexTile* tile : m_allTiles)
+	{
+		tile->isMarked = false;
+		tile->circle.setOutlineColor(tile->circle.getFillColor());
+	}
+
+	m_leftMousePressed = false;
+}
+
+void Game::moveGamePiece()
+{
+	// Move the Player Texture to the new position over a few frames
+	m_pieceInPlay->tile->isOccupied = false;
+	m_pieceInPlay->tile = m_pressedToMoveToTile;
+	m_pieceInPlay->tile->winReady = false;
+	m_pieceInPlay->m_circle.setPosition(m_pressedToMoveToTile->m_position);
+	m_pressedToMoveToTile->isOccupied = true;
+	m_gamePhase = Phase::SelectingPieceToMove;
+	if (m_pressedToMoveToTile->isBlueFinishSlot)
+	{
+		m_pressedToMoveToTile->winReady = true;
+	}
+
+	// Swap turn;
+	Game::m_players = Players::PlayerTwo;
+	m_gameText.setString("AI's turn!");
 }
 
 

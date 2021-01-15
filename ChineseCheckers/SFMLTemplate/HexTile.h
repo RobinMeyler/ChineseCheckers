@@ -46,7 +46,7 @@ public:
 	bool isBlueFinishSlot{ false };
 	bool winReady{ false };
 
-	int m_AiScoreValueMinMax{ -100 };
+	float m_AiScoreValueMinMax{ 0 };
 
 	float heuristicValue;
 };

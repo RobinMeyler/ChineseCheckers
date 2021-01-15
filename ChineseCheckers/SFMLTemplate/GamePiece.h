@@ -13,6 +13,6 @@ public:
 
 	sf::CircleShape m_circle;
 	HexTile* tile;
-	
+	bool isBluePiece;
 };
 
