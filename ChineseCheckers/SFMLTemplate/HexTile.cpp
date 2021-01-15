@@ -11,11 +11,12 @@ void HexTile::setupCircle()
     circle.setOutlineThickness(3);
     circle.setOutlineColor(sf::Color::White);
 
-    text_x.setCharacterSize(20);
+    text_x.setCharacterSize(30);
     text_x.setFont(m_font);
     text_x.setFillColor(sf::Color::Magenta);
-    text_x.setPosition(sf::Vector2f(m_position.x -10, m_position.y - 10));
+    text_x.setPosition(sf::Vector2f(m_position.x, m_position.y ));
     text_x.setString("0");
+
     text_y.setCharacterSize(20);
     text_y.setFont(m_font);
     text_y.setFillColor(sf::Color::Magenta);
@@ -35,7 +36,7 @@ void HexTile::setNeighbour(HexTile* t_neighbour)
 void HexTile::render(sf::RenderWindow* t_rendWindow)
 {
     t_rendWindow->draw(circle);
-    //t_rendWindow->draw(text_x);
+    t_rendWindow->draw(text_x);
     //t_rendWindow->draw(text_y);
    // t_rendWindow->draw(text_z);
 }

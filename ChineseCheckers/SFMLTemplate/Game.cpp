@@ -52,6 +52,8 @@ Game::Game() :
 		{
 			for (int j = 0; j < p_HexGrid->m_gridHexTiles.size(); j++)
 			{
+				p_HexGrid->m_gridHexTiles.at(j)->isRedFinishSlot = true;
+				m_redFinishSpots.push_back(p_HexGrid->m_gridHexTiles.at(j));
 				m_player.m_marbles.at(j).m_circle.setPosition(p_HexGrid->m_gridHexTiles.at(j)->m_position);
 				m_player.m_marbles.at(j).tile = p_HexGrid->m_gridHexTiles.at(j);
 				p_HexGrid->m_gridHexTiles.at(j)->isOccupied = true;
@@ -63,6 +65,8 @@ Game::Game() :
 		{
 			for (int j = 0; j < p_HexGrid->m_gridHexTiles.size(); j++)
 			{
+				p_HexGrid->m_gridHexTiles.at(j)->isBlueFinishSlot = true;
+				m_blueFinishSpots.push_back(p_HexGrid->m_gridHexTiles.at(j));
 				m_AI.m_marbles.at(j).m_circle.setPosition(p_HexGrid->m_gridHexTiles.at(j)->m_position);
 				m_AI.m_marbles.at(j).tile = p_HexGrid->m_gridHexTiles.at(j);
 				p_HexGrid->m_gridHexTiles.at(j)->isOccupied = true;
@@ -98,6 +102,35 @@ Game::Game() :
 			}
 		}
 	}
+	//m_AI.m_marbles.at(0).m_circle.setPosition(m_allTiles.at(15)->m_position);
+	//m_AI.m_marbles.at(0).tile = m_allTiles.at(15);
+
+	//m_AI.m_marbles.at(1).m_circle.setPosition(m_allTiles.at(23)->m_position);
+	//m_AI.m_marbles.at(1).tile = m_allTiles.at(23);
+
+	//m_AI.m_marbles.at(2).m_circle.setPosition(m_allTiles.at(9)->m_position);
+	//m_AI.m_marbles.at(2).tile = m_allTiles.at(9);
+
+	//m_AI.m_marbles.at(3).m_circle.setPosition(m_allTiles.at(6)->m_position);
+	//m_AI.m_marbles.at(3).tile = m_allTiles.at(6);
+
+	//m_AI.m_marbles.at(4).m_circle.setPosition(m_allTiles.at(20)->m_position);
+	//m_AI.m_marbles.at(4).tile = m_allTiles.at(20);
+
+	//m_AI.m_marbles.at(5).tile = m_allTiles.at(24);
+	//m_AI.m_marbles.at(5).m_circle.setPosition(m_allTiles.at(24)->m_position);
+
+	//m_AI.m_marbles.at(6).tile = m_allTiles.at(12);
+	//m_AI.m_marbles.at(6).m_circle.setPosition(m_allTiles.at(12)->m_position);
+
+	//m_AI.m_marbles.at(7).tile = m_allTiles.at(27);
+	//m_AI.m_marbles.at(7).m_circle.setPosition(m_allTiles.at(27)->m_position);
+
+	//m_AI.m_marbles.at(8).tile = m_allTiles.at(4);
+	//m_AI.m_marbles.at(8).m_circle.setPosition(m_allTiles.at(4)->m_position);
+
+	//m_AI.m_marbles.at(9).tile = m_allTiles.at(34);
+	//m_AI.m_marbles.at(9).m_circle.setPosition(m_allTiles.at(34)->m_position);
 }
 
 Game::~Game()
@@ -256,16 +289,20 @@ void Game::update(sf::Time t_deltaTime)
 			m_pressedToMoveToTile->isOccupied = true;
 			m_gamePhase = Phase::SelectingMarble;
 			// Swap turn;
-
+			Game::m_players = Players::PlayerTwo;
 		}
 	}
 	else if (Game::m_players == Players::PlayerTwo)
 	{
 		// AI ( For now )
 
+		// Run evaluation function
+		runEvaluation();
+		Game::m_players = Players::PlayerOne;
+		// Use Min Max to determine which is best
 
 
-
+		// Make move
 
 
 
@@ -333,6 +370,62 @@ void Game::checkHops(sf::Vector3i t_direction, HexTile* t_followTile)
 	}
 
 	return;
+}
+
+void Game::runEvaluation()
+{
+	for (auto& gamePiece : m_AI.m_marbles)		// For Each AI Piece
+	{
+		int shortestPathToEnd = 30;
+		HexTile* shortestEnd = nullptr;
+		for (auto& finishTile : m_redFinishSpots)		// for each tile in the endZone, find the closest one
+		{
+			int result = findAxisdiff(finishTile, gamePiece.tile);
+			
+			if (result < shortestPathToEnd)
+			{
+				shortestPathToEnd = result;
+				shortestEnd = finishTile;
+			}
+		}
+
+		// Now have the shortest Path
+		for (auto& tile : m_allTiles)				// for every Tile
+		{
+			int result = findAxisdiff(tile, shortestEnd);		// Find the distance to the closest end tile
+			
+			int newScore = shortestPathToEnd - result;		// New score is the distance from gamePiece to the end - the actual diatance to the end
+			if (tile->m_AiScoreValueMinMax < newScore)		// If it isn't already score higher
+			{
+				tile->m_AiScoreValueMinMax = newScore;		// If the tile is further away than the player it will be -1, -2 etc, if closer 1, 2 etc
+			}
+			
+			tile->text_x.setString(std::to_string(tile->m_AiScoreValueMinMax));
+		}
+	}
+
+}
+
+int Game::findAxisdiff(HexTile* one, HexTile* two)
+{
+	int largestAxisDiff = 30;
+	int distanceX = abs(one->m_gridCoordinates3axis.x - two->m_gridCoordinates3axis.x);
+	int distanceY = abs(one->m_gridCoordinates3axis.y - two->m_gridCoordinates3axis.y);
+	int distanceZ = abs(one->m_gridCoordinates3axis.z - two->m_gridCoordinates3axis.z);
+
+	if (distanceX > distanceY)
+	{
+		largestAxisDiff = distanceX;
+	}
+	else
+	{
+		largestAxisDiff = distanceY;
+	}
+	if (largestAxisDiff < distanceZ)
+	{
+		largestAxisDiff = distanceZ;
+	}
+	return largestAxisDiff;
 }
 
 

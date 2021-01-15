@@ -59,9 +59,13 @@ private:
 	std::vector<HexTile*>* m_tilesPtr;
 	HexGrid m_HexGridCenter;
 	std::vector<HexGrid*> m_HexGridTriangleWedges;
+	std::vector<HexTile*> m_blueFinishSpots;
+	std::vector<HexTile*> m_redFinishSpots;
 	std::vector<HexTile*> m_allTiles;
-	void checkHops(sf::Vector3i t_direction, HexTile* t_followTile);
 
+	void checkHops(sf::Vector3i t_direction, HexTile* t_followTile);
+	void runEvaluation();
+	int findAxisdiff(HexTile* one, HexTile* two);
 
 	Player m_player;
 	AI m_AI;

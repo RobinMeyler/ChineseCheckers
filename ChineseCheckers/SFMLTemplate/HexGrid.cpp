@@ -69,9 +69,9 @@ void HexGrid::TileGeneration()
 
 					HexTile* p_tile = new HexTile(positionCoordinates, gridCoordinates3axis, m_hexSize);
 					p_tile->circle.setFillColor(sf::Color::White);
-					p_tile->text_x.setString(std::to_string(p_tile->m_gridCoordinates3axis.x));
-					p_tile->text_y.setString(std::to_string(p_tile->m_gridCoordinates3axis.y));
-					p_tile->text_z.setString(std::to_string(p_tile->m_gridCoordinates3axis.z));
+					//p_tile->text_x.setString(std::to_string(p_tile->m_gridCoordinates3axis.x));
+					//p_tile->text_y.setString(std::to_string(p_tile->m_gridCoordinates3axis.y));
+					//p_tile->text_z.setString(std::to_string(p_tile->m_gridCoordinates3axis.z));
 					m_gridHexTiles.push_back(p_tile);
 				}
 			}

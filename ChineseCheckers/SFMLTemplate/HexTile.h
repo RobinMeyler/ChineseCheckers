@@ -42,5 +42,11 @@ public:
 	sf::Text text_z;
 	sf::Font m_font;
 
+	bool isRedFinishSlot{ false };
+	bool isBlueFinishSlot{ false };
+	bool winReady{ false };
+
+	int m_AiScoreValueMinMax{ -100 };
+
 	float heuristicValue;
 };
