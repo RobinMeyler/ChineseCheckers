@@ -57,6 +57,7 @@ Game::Game() :
 				m_player.m_marbles.at(j).m_circle.setPosition(p_HexGrid->m_gridHexTiles.at(j)->m_position);
 				m_player.m_marbles.at(j).tile = p_HexGrid->m_gridHexTiles.at(j);
 				p_HexGrid->m_gridHexTiles.at(j)->isOccupied = true;
+				m_AI.m_oppositionMarbles.push_back(m_player.m_marbles.at(j));
 			}
 		}
 
@@ -300,29 +301,50 @@ void Game::update(sf::Time t_deltaTime)
 		runEvaluation();
 		Game::m_players = Players::PlayerOne;
 		// Use Min Max to determine which is best
-		/*for (int i = 0; i < m_AI.m_marbles.size(); i++)
-		{
-			m_AI.minimax(m_AI.m_marbles.at(i).tile, 8, false, -std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
-		}*/
 
 		m_AI.minimax(m_AI.m_marbles, m_AI.m_oppositionMarbles, m_AI.m_marbles.at(0).tile, 5, true, m_AI.getCopyOfMapTiles(m_allTiles));
 		
 		// Make move
+		bool specialMove = false;
 		for (int i = 0; i < m_AI.m_marbles.size(); i++)//(auto piece : m_AI.m_marbles)
 		{
-			if (m_AI.m_marbles.at(i).tile->m_gridCoordinates3axis == m_AI.bestMove.piece.tile->m_gridCoordinates3axis)
+			if (m_AI.m_marbles.at(i).tile->m_gridCoordinates3axis == m_AI.mostIdealMove.piece.tile->m_gridCoordinates3axis)
 			{
 				for (auto tile : m_allTiles)
 				{
-					if (tile->m_gridCoordinates3axis == m_AI.bestMove.tileToMoveTo->m_gridCoordinates3axis)
+					if (tile->m_gridCoordinates3axis == m_AI.mostIdealMove.tileToMoveTo->m_gridCoordinates3axis)
 					{
-						m_AI.m_marbles.at(i).tile->isOccupied = false;
-						m_AI.m_marbles.at(i).tile = tile;
-						m_AI.m_marbles.at(i).tile->m_position = tile->m_position;
-						m_AI.m_marbles.at(i).m_circle.getPosition();
-						m_AI.m_marbles.at(i).m_circle.setPosition(m_AI.m_marbles.at(i).tile->m_position);
-						m_AI.m_marbles.at(i).m_circle.getPosition();
-						m_AI.m_marbles.at(i).tile->isOccupied = true;
+						for (auto tileTwo : tile->m_neighbours)
+						{
+							if (tileTwo->m_gridCoordinates3axis.y < tile->m_gridCoordinates3axis.y && tileTwo->isOccupied == true)
+							{
+								for (int j = 0; j < m_AI.m_marbles.size(); j++)
+								{
+									if (m_AI.m_marbles.at(j).tile->m_gridCoordinates3axis == tileTwo->m_gridCoordinates3axis)
+									{
+										m_AI.m_marbles.at(j).tile->isOccupied = false;
+										m_AI.m_marbles.at(j).tile = tile;
+										m_AI.m_marbles.at(j).tile->m_position = tile->m_position;
+										m_AI.m_marbles.at(j).m_circle.getPosition();
+										m_AI.m_marbles.at(j).m_circle.setPosition(m_AI.m_marbles.at(i).tile->m_position);
+										m_AI.m_marbles.at(j).m_circle.getPosition();
+										m_AI.m_marbles.at(j).tile->isOccupied = true;
+										specialMove = true;
+										break;
+									}
+								}
+							}
+						}
+
+						if (specialMove == false) {
+							m_AI.m_marbles.at(i).tile->isOccupied = false;
+							m_AI.m_marbles.at(i).tile = tile;
+							m_AI.m_marbles.at(i).tile->m_position = tile->m_position;
+							m_AI.m_marbles.at(i).m_circle.getPosition();
+							m_AI.m_marbles.at(i).m_circle.setPosition(m_AI.m_marbles.at(i).tile->m_position);
+							m_AI.m_marbles.at(i).m_circle.getPosition();
+							m_AI.m_marbles.at(i).tile->isOccupied = true;
+						}
 					}
 				}
 			}

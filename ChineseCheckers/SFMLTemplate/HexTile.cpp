@@ -108,7 +108,6 @@ HexTile* HexTile::checkHops(sf::Vector3i t_direction, HexTile* t_followTile)
             }
         }
     }
-
     return t_followTile;
 }
 

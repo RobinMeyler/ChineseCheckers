@@ -14,7 +14,8 @@ AI::AI()
 		oop += 60;
 		m_marbles.push_back(marble);
 	}
-	
+	mostIdealMove.piece.tile = new HexTile(sf::Vector3i(0,0,0));
+	mostIdealMove.tileToMoveTo = new HexTile(sf::Vector3i(0, 0, 0));
 }
 
 AI::~AI()
@@ -56,8 +57,13 @@ HexTile* AI::minimax(std::vector<GamePiece> t_GamePiecesAi, std::vector<GamePiec
 		// call minimax using updated pieces
 		HexTile* value = minimax(newCopyOfGamePiecesAI, newCopyOfGamePiecesPlayer, node, depth - 1, false, t_NewCopyOfAllTiles);
 		
-		if (bestValue->m_AiScoreValueMinMax < value->m_AiScoreValueMinMax) //bestValue = std::max(bestValue, value->m_AiScoreValueMinMax);
+		if (bestValue->m_AiScoreValueMinMax < value->m_AiScoreValueMinMax || value->m_gridCoordinates3axis.y < bestValue->m_gridCoordinates3axis.y) //bestValue = std::max(bestValue, value->m_AiScoreValueMinMax);
+		{
 			bestValue = value;
+			mostIdealMove.piece.tile->m_gridCoordinates3axis = bestMove.piece.tile->m_gridCoordinates3axis;
+			mostIdealMove.tileToMoveTo->m_gridCoordinates3axis = bestMove.tileToMoveTo->m_gridCoordinates3axis;
+		}
+
 	}
 	else {// (minimizing player)
 		GamePieceMove playerMove = min(t_GamePiecesAi, depth, t_GamePiecesPlayer, t_copyOfAllTiles);
@@ -91,7 +97,7 @@ GamePieceMove AI::max(std::vector<GamePiece> t_GamePiecesAi, int depth, std::vec
 			if (bestMove.moveScore < t_GamePiecesAi.at(i).tile->getPossibleMovesFromThisTile().at(n)->m_AiScoreValueMinMax) //check each move and set best move based on heuristic
 			{
 				bestMove.piece = t_GamePiecesAi.at(i);  // set the best moves piece
-				//bestMove.piece->tile = t_GamePiecesAi.at(i).tile;
+				bestMove.piece.tile = t_GamePiecesAi.at(i).tile;
 				bestMove.piece.tile->m_gridCoordinates3axis = t_GamePiecesAi.at(i).tile->m_gridCoordinates3axis;
 				bestMove.piece.tile->m_position = t_GamePiecesAi.at(i).tile->m_position;
 				bestMove.tileToMoveTo = t_GamePiecesAi.at(i).tile->getPossibleMovesFromThisTile().at(n); // set the tileToMoveTo
@@ -99,7 +105,7 @@ GamePieceMove AI::max(std::vector<GamePiece> t_GamePiecesAi, int depth, std::vec
 			}
 		}
 	}
-	mostIdealMove = bestMove;//??????????????
+	//mostIdealMove = bestMove;//??????????????
 	return bestMove;
 }
 
