@@ -1,12 +1,5 @@
 #include "HexTile.h"
 
-//HexTile::HexTile(const HexTile& other) //copy constructor
-//{
-//    m_position = *new MyVector3(other.m_position);
-//    m_gridCoordinates3axis = *new MyVector3(other.m_gridCoordinates3axis);
-//    isOccupied = *new bool(other.isOccupied);
-//    circle = *new sf::CircleShape(other.circle);
-//}
 
 void HexTile::copyNeighbours(std::vector<HexTile*> t_neighboursToCopy, std::vector<HexTile*> t_copyOfAllTiles)
 {
@@ -24,30 +17,12 @@ void HexTile::copyNeighbours(std::vector<HexTile*> t_neighboursToCopy, std::vect
 
 void HexTile::setupCircle()
 {
-    m_font.loadFromFile("digital-7.ttf");
-
     circle.setPosition(m_position);
     circle.setRadius(m_cellSize / 1.5f);
     circle.setOrigin(circle.getRadius() / 2, circle.getRadius() / 2);
     circle.setFillColor(sf::Color::White);
     circle.setOutlineThickness(3);
     circle.setOutlineColor(sf::Color::White);
-
-    text_x.setCharacterSize(30);
-    text_x.setFont(m_font);
-    text_x.setFillColor(sf::Color::Magenta);
-    text_x.setPosition(sf::Vector2f(m_position.x, m_position.y ));
-    text_x.setString("0");
-
-    text_y.setCharacterSize(20);
-    text_y.setFont(m_font);
-    text_y.setFillColor(sf::Color::Magenta);
-    text_y.setPosition(sf::Vector2f(m_position.x, m_position.y + 10));
-
-    text_z.setCharacterSize(20);
-    text_z.setFont(m_font);
-    text_z.setFillColor(sf::Color::Magenta);
-    text_z.setPosition(sf::Vector2f(m_position.x + 10, m_position.y - 10));
 }
 
 void HexTile::setNeighbour(HexTile* t_neighbour)
@@ -59,8 +34,6 @@ void HexTile::render(sf::RenderWindow* t_rendWindow)
 {
     t_rendWindow->draw(circle);
     t_rendWindow->draw(text_x);
-    //t_rendWindow->draw(text_y);
-   // t_rendWindow->draw(text_z);
 }
 
 void HexTile::setPosition(MyVector3 t_newPos)

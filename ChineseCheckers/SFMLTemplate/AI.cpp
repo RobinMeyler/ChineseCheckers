@@ -77,7 +77,7 @@ HexTile* AI::minimax(std::vector<GamePiece> t_GamePiecesAi, std::vector<GamePiec
 		// call minimax using updated pieces
 		HexTile* value = minimax(newCopyOfGamePiecesAI, newCopyOfGamePiecesPlayer, node, depth - 1, true, t_NewCopyOfAllTiles);
 
-		if (bestValue->m_AiScoreValueMinMax > value->m_AiScoreValueMinMax) //bestValue = std::max(bestValue, value->m_AiScoreValueMinMax);
+		if (bestValue->m_AiScoreValueMinMax > value->m_AiScoreValueMinMax || value->m_gridCoordinates3axis.y < bestValue->m_gridCoordinates3axis.y) //bestValue = std::max(bestValue, value->m_AiScoreValueMinMax);
 			bestValue = value;
 
 	}

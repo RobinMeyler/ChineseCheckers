@@ -14,9 +14,9 @@ enum class Players {
 };
 
 enum class Phase {
-	SelectingMarble,
+	SelectingPieceToMove,
 	Evaluating,
-	SelectingMove,
+	SelectingTileToMoveTo,
 	Moving
 };
 
@@ -47,7 +47,7 @@ private:
 
 	// Robin
 	sf::Vector2i m_mousePosition;
-	bool m_leftPressed;
+	bool m_leftMousePressed;
 	bool m_rightPressed;
 
 	HexTile* m_pressedToPlayTile;
@@ -66,7 +66,16 @@ private:
 	void checkHops(sf::Vector3i t_direction, HexTile* t_followTile);
 	void runEvaluation();
 	int findAxisdiff(HexTile* one, HexTile* two);
-
+	void checkForWin();
+	void runPlayerStates();
+	void runAIStates();
+	void checkIfGamePiece();
+	void evaluatePossibleMoves();
+	void checkIfMoveAllowed();
+	void moveGamePiece();
+	bool m_gameFinished;
+	sf::Text m_gameText;
+	sf::Font m_font;
 	Player m_player;
 	AI m_AI;
 };
