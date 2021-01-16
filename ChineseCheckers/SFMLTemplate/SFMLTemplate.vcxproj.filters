@@ -74,5 +74,8 @@
     <ClInclude Include="GamePiece.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GamePieceMove.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

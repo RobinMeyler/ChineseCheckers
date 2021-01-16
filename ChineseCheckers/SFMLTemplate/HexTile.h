@@ -13,15 +13,22 @@ public:
 	// constructor
 	HexTile(sf::Vector2f t_position, sf::Vector3i t_gridCoordinates3axis, int t_cellSize) { m_position = t_position; m_gridCoordinates3axis = t_gridCoordinates3axis; m_cellSize = t_cellSize; setupCircle(); }
 	HexTile(sf::Vector3i t_gridCoordinates3axis) { m_gridCoordinates3axis = t_gridCoordinates3axis; setupCircle(); } // Overloaded, only grid coords passed, figure out gameworld pos
+	//copy constructor
+	//HexTile(const HexTile& other);
+	void copyNeighbours(std::vector<HexTile*> t_neighboursToCopy, std::vector<HexTile*> t_copyOfAllTiles);
+
 	void setupCircle();
 	void setNeighbour(HexTile* t_neighbour);
 	void render(sf::RenderWindow* t_rendWindow);
 	void setPosition(MyVector3 t_newPos);
 
-	void checkHops(sf::Vector3i t_direction);
+	HexTile* checkHops(sf::Vector3i t_direction, HexTile* t_followTile);
+
+	std::vector<HexTile*> getPossibleMovesFromThisTile(); //returns the positions which a piece at this location could move to
+	std::vector<HexTile*> possibleMoves;
 
 	MyVector3 m_position; // The game world position of the Hex tile 
-	sf::Vector3i m_gridCoordinates3axis; // the grid coordinates, (on three axis), hex coordinates
+	MyVector3 m_gridCoordinates3axis; // the grid coordinates, (on three axis), hex coordinates
 	sf::CircleShape circle;
 	int m_cellSize;
 

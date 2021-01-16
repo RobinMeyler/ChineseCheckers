@@ -77,7 +77,7 @@ Game::Game() :
 				m_blueFinishSpots.push_back(p_HexGrid->m_gridHexTiles.at(j));
 				/*m_AI.m_marbles.at(j).m_circle.setPosition(p_HexGrid->m_gridHexTiles.at(j)->m_position);
 				m_AI.m_marbles.at(j).tile = p_HexGrid->m_gridHexTiles.at(j);
-				p_HexGrid->m_gridHexTiles.at(j)->isOccupied = true;*/
+				p_HexGrid->m_gridHexTiles.at(j)->isOccupied = true*/;
 			}
 		}
 		m_HexGridTriangleWedges.push_back(p_HexGrid);
@@ -280,9 +280,48 @@ void Game::runAIStates()
 	// AI ==============================================================
 
 		// Run evaluation function ============
+	// AI ( For now )
+
+		// Run evaluation function
 	runEvaluation();
+	Game::m_players = Players::PlayerOne;
+	// Use Min Max to determine which is best
+	/*for (int i = 0; i < m_AI.m_marbles.size(); i++)
+	{
+		m_AI.minimax(m_AI.m_marbles.at(i).tile, 8, false, -std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
+	}*/
 
+	m_AI.minimax(m_AI.m_marbles, m_AI.m_oppositionMarbles, m_AI.m_marbles.at(0).tile, 5, true, m_AI.getCopyOfMapTiles(m_allTiles));
 
+	// Make move
+	for (int i = 0; i < m_AI.m_marbles.size(); i++)//(auto piece : m_AI.m_marbles)
+	{
+		if (m_AI.m_marbles.at(i).tile->m_gridCoordinates3axis == m_AI.bestMove.piece.tile->m_gridCoordinates3axis)
+		{
+			for (auto tile : m_allTiles)
+			{
+				if (tile->m_gridCoordinates3axis == m_AI.bestMove.tileToMoveTo->m_gridCoordinates3axis)
+				{
+					m_AI.m_marbles.at(i).tile->isOccupied = false;
+					m_AI.m_marbles.at(i).tile = tile;
+					m_AI.m_marbles.at(i).tile->m_position = tile->m_position;
+					m_AI.m_marbles.at(i).m_circle.getPosition();
+					m_AI.m_marbles.at(i).m_circle.setPosition(m_AI.m_marbles.at(i).tile->m_position);
+					m_AI.m_marbles.at(i).m_circle.getPosition();
+					m_AI.m_marbles.at(i).tile->isOccupied = true;
+				}
+			}
+		}
+	}
+
+	/*m_AI.bestMove.piece.tile->isOccupied = false;
+	m_AI.bestMove.piece.tile = m_AI.mostIdealMove.tileToMoveTo;
+	m_AI.bestMove.piece.m_circle.setPosition(m_AI.mostIdealMove.piece.tile->m_position);
+	m_AI.bestMove.piece.tile->isOccupied = true;*/
+
+	m_gamePhase = Phase::SelectingPieceToMove;
+	// Swap turn;
+	Game::m_players = Players::PlayerOne;
 	// Use Min Max to determine which is best ==========================
 	// For each tile:
 	// Check AI's highest scoring move, then the players lowest scoring in that case, the players best scoring move etc
