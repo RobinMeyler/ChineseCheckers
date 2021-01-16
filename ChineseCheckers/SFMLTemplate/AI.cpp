@@ -105,7 +105,6 @@ GamePieceMove AI::max(std::vector<GamePiece> t_GamePiecesAi, int depth, std::vec
 			}
 		}
 	}
-	//mostIdealMove = bestMove;//??????????????
 	return bestMove;
 }
 

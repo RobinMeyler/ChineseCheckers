@@ -56,9 +56,6 @@
     <ClInclude Include="HexGrid.h">
       <Filter>Header Files\HexGridFiles</Filter>
     </ClInclude>
-    <ClInclude Include="HexMapStuff.h">
-      <Filter>Header Files\HexGridFiles</Filter>
-    </ClInclude>
     <ClInclude Include="HexTile.h">
       <Filter>Header Files\HexGridFiles</Filter>
     </ClInclude>

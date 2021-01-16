@@ -1,3 +1,6 @@
+
+// Author: Robin Meyler, Josh Browne
+
 #ifndef GAME
 #define GAME
 

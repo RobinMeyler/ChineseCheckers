@@ -142,7 +142,6 @@
     <ClInclude Include="GamePiece.h" />
     <ClInclude Include="GamePieceMove.h" />
     <ClInclude Include="HexGrid.h" />
-    <ClInclude Include="HexMapStuff.h" />
     <ClInclude Include="HexTile.h" />
     <ClInclude Include="MyVector3.h" />
     <ClInclude Include="AI.h" />

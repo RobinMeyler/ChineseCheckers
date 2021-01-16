@@ -1,3 +1,5 @@
+// Author: Robin Meyler, Josh Browne
+
 #pragma once
 #include <SFML\Graphics.hpp>
 #include <iostream>
