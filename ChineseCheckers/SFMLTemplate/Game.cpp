@@ -75,9 +75,10 @@ Game::Game() :
 			{
 				p_HexGrid->m_gridHexTiles.at(j)->isBlueFinishSlot = true;
 				m_blueFinishSpots.push_back(p_HexGrid->m_gridHexTiles.at(j));
-				/*m_AI.m_marbles.at(j).m_circle.setPosition(p_HexGrid->m_gridHexTiles.at(j)->m_position);
+				m_AI.m_marbles.at(j).m_circle.setPosition(p_HexGrid->m_gridHexTiles.at(j)->m_position);
 				m_AI.m_marbles.at(j).tile = p_HexGrid->m_gridHexTiles.at(j);
-				p_HexGrid->m_gridHexTiles.at(j)->isOccupied = true*/;
+				p_HexGrid->m_gridHexTiles.at(j)->isOccupied = true;
+				m_AI.m_oppositionMarbles.push_back(m_player.m_marbles.at(j));
 			}
 		}
 		m_HexGridTriangleWedges.push_back(p_HexGrid);
@@ -112,7 +113,7 @@ Game::Game() :
 			}
 		}
 	}
-	m_AI.m_marbles.at(0).m_circle.setPosition(m_allTiles.at(3)->m_position);
+	/*m_AI.m_marbles.at(0).m_circle.setPosition(m_allTiles.at(3)->m_position);
 	m_AI.m_marbles.at(0).tile = m_allTiles.at(3);
 	m_allTiles.at(3)->isOccupied = true;
 
@@ -150,7 +151,7 @@ Game::Game() :
 
 	m_AI.m_marbles.at(9).tile = m_allTiles.at(3);
 	m_AI.m_marbles.at(9).m_circle.setPosition(m_allTiles.at(3)->m_position);
-	m_allTiles.at(3)->isOccupied = true;
+	m_allTiles.at(3)->isOccupied = true;*/
 }
 
 Game::~Game()
@@ -284,12 +285,6 @@ void Game::runAIStates()
 
 		// Run evaluation function
 	runEvaluation();
-	Game::m_players = Players::PlayerOne;
-	// Use Min Max to determine which is best
-	/*for (int i = 0; i < m_AI.m_marbles.size(); i++)
-	{
-		m_AI.minimax(m_AI.m_marbles.at(i).tile, 8, false, -std::numeric_limits<float>::max(), std::numeric_limits<float>::max());
-	}*/
 
 	m_AI.minimax(m_AI.m_marbles, m_AI.m_oppositionMarbles, m_AI.m_marbles.at(0).tile, 5, true, m_AI.getCopyOfMapTiles(m_allTiles));
 
@@ -313,7 +308,7 @@ void Game::runAIStates()
 			}
 		}
 	}
-
+	runEvaluation();
 	/*m_AI.bestMove.piece.tile->isOccupied = false;
 	m_AI.bestMove.piece.tile = m_AI.mostIdealMove.tileToMoveTo;
 	m_AI.bestMove.piece.m_circle.setPosition(m_AI.mostIdealMove.piece.tile->m_position);
@@ -340,44 +335,7 @@ void Game::runAIStates()
 }
 
 
-// Recursive
-void Game::checkHops(sf::Vector3i t_direction, HexTile* t_followTile)
-{
-	if (t_followTile->isOccupied == true)		// If it's filled
-	{
-		t_followTile->isMarked = true;
-		sf::Vector3i newCoords = t_followTile->m_gridCoordinates3axis + t_direction;
-		for (auto& tile : t_followTile->m_neighbours)
-		{
-			if (tile->m_gridCoordinates3axis == newCoords)	// If spot at new coords exists
-			{
-				if (tile->isOccupied == false )				// and is not filled
-				{
-					checkHops(t_direction, tile);			// Mark and check it
-				}
-				else
-				{
-					return;
-				}
-			}
-		}
-	}
-	else			// If not filled
-	{
-		t_followTile->isMarked = true;
-		t_followTile->circle.setOutlineColor(sf::Color::Green);
-		for (auto& neighbours : t_followTile->m_neighbours)
-		{
-			if (neighbours->isOccupied == true && neighbours->isMarked == false)
-			{
-				// Recursive checks
-				sf::Vector3i direction = neighbours->m_gridCoordinates3axis - t_followTile->m_gridCoordinates3axis;
-				checkHops(direction, neighbours);
-			}
-		}
-	}
-	return;
-}
+
 
 void Game::runEvaluation()
 {
@@ -391,8 +349,20 @@ void Game::runEvaluation()
 	{
 		if (gamePiece.tile->m_gridCoordinates3axis.y < checkY)
 		{
-			furthestBackMarble = &gamePiece;
-			checkY = gamePiece.tile->m_gridCoordinates3axis.y;
+			bool moveable = false;
+			for (auto& neigh : gamePiece.tile->m_neighbours)
+			{
+				if (neigh->isOccupied == false && neigh->m_gridCoordinates3axis.y >= gamePiece.tile->m_gridCoordinates3axis.y)
+				{
+					moveable = true;
+				}
+			}
+			
+			if (moveable == true)
+			{
+				furthestBackMarble = &gamePiece;
+				checkY = gamePiece.tile->m_gridCoordinates3axis.y;
+			}
 		}
 		if (gamePiece.tile->m_gridCoordinates3axis.y > checkYOther)
 		{
@@ -438,7 +408,7 @@ void Game::runEvaluation()
 				{
 					YaxisValue = -tile->m_gridCoordinates3axis.y;
 				}
-				float evaluation = (YaxisValue* 0.25f) + (inversedDistance * 2.f) + (distanceToEnd * 0.8f);
+				float evaluation = /*(YaxisValue * 0.01f) */+ (inversedDistance * 1.5f) +  (distanceToEnd * 1.f);
 
 				if (tile->m_AiScoreValueMinMax < evaluation)		// If it isn't already score higher
 				{
@@ -449,6 +419,7 @@ void Game::runEvaluation()
 			}
 		}
 	}
+	
 	float difference = furthestForwardMarble->tile->m_gridCoordinates3axis.y - furthestBackMarble->tile->m_gridCoordinates3axis.y;
 	for (auto& tile : furthestBackMarble->tile->m_neighbours)
 	{
@@ -466,12 +437,17 @@ void Game::runEvaluation()
 						{
 							innerTile->m_AiScoreValueMinMax += difference + 2;
 						}
+						else
+						{
+
+						}
 					}
 				}
 			}
 			else
 			{
-				tile->m_AiScoreValueMinMax += difference;
+				if(difference > 3)
+					tile->m_AiScoreValueMinMax += difference;
 			}
 			
 		}
@@ -644,4 +620,41 @@ void Game::moveGamePiece()
 }
 
 
-
+// Recursive
+void Game::checkHops(sf::Vector3i t_direction, HexTile* t_followTile)
+{
+	if (t_followTile->isOccupied == true)		// If it's filled
+	{
+		t_followTile->isMarked = true;
+		sf::Vector3i newCoords = t_followTile->m_gridCoordinates3axis + t_direction;
+		for (auto& tile : t_followTile->m_neighbours)
+		{
+			if (tile->m_gridCoordinates3axis == newCoords)	// If spot at new coords exists
+			{
+				if (tile->isOccupied == false)				// and is not filled
+				{
+					checkHops(t_direction, tile);			// Mark and check it
+				}
+				else
+				{
+					return;
+				}
+			}
+		}
+	}
+	else			// If not filled
+	{
+		t_followTile->isMarked = true;
+		t_followTile->circle.setOutlineColor(sf::Color::Green);
+		for (auto& neighbours : t_followTile->m_neighbours)
+		{
+			if (neighbours->isOccupied == true && neighbours->isMarked == false)
+			{
+				// Recursive checks
+				sf::Vector3i direction = neighbours->m_gridCoordinates3axis - t_followTile->m_gridCoordinates3axis;
+				checkHops(direction, neighbours);
+			}
+		}
+	}
+	return;
+}
