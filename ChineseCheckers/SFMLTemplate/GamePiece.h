@@ -11,6 +11,7 @@ class GamePiece
 public:
 	GamePiece();
 
+
 	sf::CircleShape m_circle;
 	HexTile* tile;
 };

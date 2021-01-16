@@ -1,12 +1,12 @@
 #include "HexTile.h"
 
-HexTile::HexTile(const HexTile& other) //copy constructor
-{
-    m_position = *new MyVector3(other.m_position);
-    m_gridCoordinates3axis = *new sf::Vector3i(other.m_gridCoordinates3axis);
-    isOccupied = *new bool(other.isOccupied);
-    circle = *new sf::CircleShape(other.circle);
-}
+//HexTile::HexTile(const HexTile& other) //copy constructor
+//{
+//    m_position = *new MyVector3(other.m_position);
+//    m_gridCoordinates3axis = *new MyVector3(other.m_gridCoordinates3axis);
+//    isOccupied = *new bool(other.isOccupied);
+//    circle = *new sf::CircleShape(other.circle);
+//}
 
 void HexTile::copyNeighbours(std::vector<HexTile*> t_neighboursToCopy, std::vector<HexTile*> t_copyOfAllTiles)
 {
@@ -94,7 +94,7 @@ HexTile* HexTile::checkHops(sf::Vector3i t_direction, HexTile* t_followTile)
             }
         }
     }
-    else			// If not filled
+    else // If not filled
     {
         t_followTile->isMarked = true;
         //t_followTile->circle.setOutlineColor(sf::Color::Green);

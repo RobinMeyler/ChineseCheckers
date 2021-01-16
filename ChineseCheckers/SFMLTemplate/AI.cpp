@@ -43,10 +43,9 @@ HexTile* AI::minimax(std::vector<GamePiece> t_GamePiecesAi, std::vector<GamePiec
 		return node;
 	}
 
-	
 	if (maximizingPlayer) {
 		// find best move
-		GamePieceMove* aiMove = max(t_GamePiecesAi, depth, t_GamePiecesPlayer, t_copyOfAllTiles);
+		GamePieceMove aiMove = max(t_GamePiecesAi, depth, t_GamePiecesPlayer, t_copyOfAllTiles);
 		//make move on new copy of gameboard
 		std::vector<HexTile*> t_NewCopyOfAllTiles = getCopyOfMapTiles(t_copyOfAllTiles); // make copy
 		std::vector<GamePiece> newCopyOfGamePiecesAI = getCopyOfGamePiecesOnCopiedMap(t_NewCopyOfAllTiles, t_GamePiecesAi);
@@ -61,7 +60,7 @@ HexTile* AI::minimax(std::vector<GamePiece> t_GamePiecesAi, std::vector<GamePiec
 			bestValue = value;
 	}
 	else {// (minimizing player)
-		GamePieceMove* playerMove = min(t_GamePiecesAi, depth, t_GamePiecesPlayer, t_copyOfAllTiles);
+		GamePieceMove playerMove = min(t_GamePiecesAi, depth, t_GamePiecesPlayer, t_copyOfAllTiles);
 		//make move on new copy of gameboard
 		std::vector<HexTile*> t_NewCopyOfAllTiles = getCopyOfMapTiles(t_copyOfAllTiles); // make copy
 		std::vector<GamePiece> newCopyOfGamePiecesAI = getCopyOfGamePiecesOnCopiedMap(t_NewCopyOfAllTiles, t_GamePiecesAi);
@@ -76,62 +75,63 @@ HexTile* AI::minimax(std::vector<GamePiece> t_GamePiecesAi, std::vector<GamePiec
 			bestValue = value;
 
 	}
-
 	return bestValue;
 }
 
 //returns move with highest benifit to AI
-GamePieceMove* AI::max(std::vector<GamePiece> t_GamePiecesAi, int depth, std::vector<GamePiece> t_GamePiecesPlayer, std::vector<HexTile*> t_copyOfAllTiles)
+GamePieceMove AI::max(std::vector<GamePiece> t_GamePiecesAi, int depth, std::vector<GamePiece> t_GamePiecesPlayer, std::vector<HexTile*> t_copyOfAllTiles)
 {
-	GamePieceMove* bestMove = new GamePieceMove();
-	bestMove->moveScore = -std::numeric_limits<float>::max();
+	//bestMove = new GamePieceMove();
+	bestMove.moveScore = std::numeric_limits<float>::min();
 	//bestValue->m_AiScoreValueMinMax = -std::numeric_limits<float>::max();
 	for (int i = 0; i < t_GamePiecesAi.size(); i++) // loop through each AI gamePiece
 	{
 		for (int n = 0; n < t_GamePiecesAi.at(i).tile->getPossibleMovesFromThisTile().size(); n++) // loop through each possible move for that piece
 		{
-			if (bestMove->moveScore < t_GamePiecesAi.at(i).tile->getPossibleMovesFromThisTile().at(n)->m_AiScoreValueMinMax) //check each move and set best move based on heuristic
+			if (bestMove.moveScore < t_GamePiecesAi.at(i).tile->getPossibleMovesFromThisTile().at(n)->m_AiScoreValueMinMax) //check each move and set best move based on heuristic
 			{
-				bestMove->piece = &t_GamePiecesAi.at(i); // set the best moves piece
-				bestMove->piece->tile = t_GamePiecesAi.at(i).tile;
-				bestMove->tileToMoveTo = t_GamePiecesAi.at(i).tile->getPossibleMovesFromThisTile().at(n); // set the tileToMoveTo
-				bestMove->moveScore = t_GamePiecesAi.at(i).tile->getPossibleMovesFromThisTile().at(n)->m_AiScoreValueMinMax;
+				bestMove.piece = t_GamePiecesAi.at(i);  // set the best moves piece
+				//bestMove.piece->tile = t_GamePiecesAi.at(i).tile;
+				bestMove.piece.tile->m_gridCoordinates3axis = t_GamePiecesAi.at(i).tile->m_gridCoordinates3axis;
+				bestMove.piece.tile->m_position = t_GamePiecesAi.at(i).tile->m_position;
+				bestMove.tileToMoveTo = t_GamePiecesAi.at(i).tile->getPossibleMovesFromThisTile().at(n); // set the tileToMoveTo
+				bestMove.moveScore = t_GamePiecesAi.at(i).tile->getPossibleMovesFromThisTile().at(n)->m_AiScoreValueMinMax;
 			}
 		}
 	}
-	mostIdealMove = *bestMove;//??????????????
+	mostIdealMove = bestMove;//??????????????
 	return bestMove;
 }
 
 //returns move with highest benefit to Player
-GamePieceMove* AI::min(std::vector<GamePiece> t_GamePiecesAi, int depth, std::vector<GamePiece> t_GamePiecesPlayer, std::vector<HexTile*> t_copyOfAllTiles)
+GamePieceMove AI::min(std::vector<GamePiece> t_GamePiecesAi, int depth, std::vector<GamePiece> t_GamePiecesPlayer, std::vector<HexTile*> t_copyOfAllTiles)
 {
-	GamePieceMove* bestMove = new GamePieceMove();
-	bestMove->moveScore = std::numeric_limits<float>::max();
+	bestMove.moveScore = std::numeric_limits<float>::max();
 	//bestValue->m_AiScoreValueMinMax = -std::numeric_limits<float>::max();
 	for (int i = 0; i < t_GamePiecesPlayer.size(); i++) // loop through each AI gamePiece
 	{
 		for (int n = 0; n < t_GamePiecesPlayer.at(i).tile->getPossibleMovesFromThisTile().size(); n++) // loop through each possible move for that piece
 		{
-			if (bestMove->moveScore > t_GamePiecesPlayer.at(i).tile->getPossibleMovesFromThisTile().at(n)->m_AiScoreValueMinMax) //check each move and set best move based on heuristic
+			if (bestMove.moveScore > t_GamePiecesPlayer.at(i).tile->getPossibleMovesFromThisTile().at(n)->m_AiScoreValueMinMax) //check each move and set best move based on heuristic
 			{
-				bestMove->piece = &t_GamePiecesPlayer.at(i); // set the best moves piece
-				bestMove->piece->tile = t_GamePiecesAi.at(i).tile;
-				bestMove->tileToMoveTo = t_GamePiecesPlayer.at(i).tile->getPossibleMovesFromThisTile().at(n); // set the tileToMoveTo
-				bestMove->moveScore = t_GamePiecesPlayer.at(i).tile->getPossibleMovesFromThisTile().at(n)->m_AiScoreValueMinMax;
+				bestMove.piece.tile->isOccupied = t_GamePiecesAi.at(i).tile->isOccupied; // set the best moves piece
+				bestMove.piece.tile->m_gridCoordinates3axis = t_GamePiecesAi.at(i).tile->m_gridCoordinates3axis;
+				bestMove.piece.tile->m_position = t_GamePiecesAi.at(i).tile->m_position;
+				bestMove.tileToMoveTo = t_GamePiecesPlayer.at(i).tile->getPossibleMovesFromThisTile().at(n); // set the tileToMoveTo
+				bestMove.moveScore = t_GamePiecesPlayer.at(i).tile->getPossibleMovesFromThisTile().at(n)->m_AiScoreValueMinMax;
 			}
 		}
 	}
 	return bestMove;
 }
 
-void AI::makeMove(GamePieceMove* move, std::vector<HexTile*> t_copyOfAllTiles, std::vector<GamePiece> moveablePieces)
+void AI::makeMove(GamePieceMove move, std::vector<HexTile*> t_copyOfAllTiles, std::vector<GamePiece> moveablePieces)
 {
 	GamePiece* copyPieceToMove = nullptr;
 	HexTile* copyTileToMoveTo = nullptr;
 	for (auto piece : moveablePieces)
 	{
-		if (piece.tile->m_gridCoordinates3axis == move->piece->tile->m_gridCoordinates3axis)
+		if (piece.tile->m_gridCoordinates3axis == move.piece.tile->m_gridCoordinates3axis)
 		{
 			copyPieceToMove = &piece;
 			break;
@@ -139,7 +139,7 @@ void AI::makeMove(GamePieceMove* move, std::vector<HexTile*> t_copyOfAllTiles, s
 	}
 	for (auto tile : t_copyOfAllTiles)
 	{
-		if (tile->m_gridCoordinates3axis == move->tileToMoveTo->m_gridCoordinates3axis)
+		if (tile->m_gridCoordinates3axis == move.tileToMoveTo->m_gridCoordinates3axis)
 		{
 			copyTileToMoveTo = tile;
 			break;
@@ -174,7 +174,7 @@ std::vector<HexTile*> AI::getCopyOfMapTiles(std::vector<HexTile*> mapToCopy)
 			}
 		}
 	}
-
+	everyMapCopy.push_back(t_NewCopyOfAllTiles);
 	return t_NewCopyOfAllTiles;
 }
 
@@ -190,10 +190,10 @@ std::vector<GamePiece> AI::getCopyOfGamePiecesOnCopiedMap(std::vector<HexTile*> 
 				GamePiece pieceCopy;
 				pieceCopy.tile = new HexTile(*piece.tile);
 				pieceCopy.m_circle = *new sf::CircleShape(pieceCopy.tile->circle);
+				pieceCopy.tile->copyNeighbours(tile->m_neighbours, map);
 				newPieces.push_back(pieceCopy);
 			}
 		}
 	}
-
 	return newPieces;
 }

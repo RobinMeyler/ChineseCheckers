@@ -11,7 +11,7 @@ class GamePieceMove
 public:
 	GamePieceMove() {};
 
-	GamePiece* piece;         // The piece we want to move
+	GamePiece piece;         // The piece we want to move
 	HexTile* tileToMoveTo;	  // Where we want to move it
 	int moveScore;            // The score of this move
 };

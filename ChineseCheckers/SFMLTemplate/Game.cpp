@@ -308,10 +308,30 @@ void Game::update(sf::Time t_deltaTime)
 		m_AI.minimax(m_AI.m_marbles, m_AI.m_oppositionMarbles, m_AI.m_marbles.at(0).tile, 5, true, m_AI.getCopyOfMapTiles(m_allTiles));
 		
 		// Make move
-		m_AI.mostIdealMove.piece->tile->isOccupied = false;
-		m_AI.mostIdealMove.piece->tile = m_AI.mostIdealMove.tileToMoveTo;
-		m_AI.mostIdealMove.piece->m_circle.setPosition(m_AI.mostIdealMove.piece->tile->m_position);
-		m_AI.mostIdealMove.piece->tile->isOccupied = true;
+		for (int i = 0; i < m_AI.m_marbles.size(); i++)//(auto piece : m_AI.m_marbles)
+		{
+			if (m_AI.m_marbles.at(i).tile->m_gridCoordinates3axis == m_AI.bestMove.piece.tile->m_gridCoordinates3axis)
+			{
+				for (auto tile : m_allTiles)
+				{
+					if (tile->m_gridCoordinates3axis == m_AI.bestMove.tileToMoveTo->m_gridCoordinates3axis)
+					{
+						m_AI.m_marbles.at(i).tile->isOccupied = false;
+						m_AI.m_marbles.at(i).tile = tile;
+						m_AI.m_marbles.at(i).tile->m_position = tile->m_position;
+						m_AI.m_marbles.at(i).m_circle.getPosition();
+						m_AI.m_marbles.at(i).m_circle.setPosition(m_AI.m_marbles.at(i).tile->m_position);
+						m_AI.m_marbles.at(i).m_circle.getPosition();
+						m_AI.m_marbles.at(i).tile->isOccupied = true;
+					}
+				}
+			}
+		}
+
+		/*m_AI.bestMove.piece.tile->isOccupied = false;
+		m_AI.bestMove.piece.tile = m_AI.mostIdealMove.tileToMoveTo;
+		m_AI.bestMove.piece.m_circle.setPosition(m_AI.mostIdealMove.piece.tile->m_position);
+		m_AI.bestMove.piece.tile->isOccupied = true;*/
 
 		m_gamePhase = Phase::SelectingMarble;
 		// Swap turn;
